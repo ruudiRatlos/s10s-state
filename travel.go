@@ -8,8 +8,8 @@ import (
 
 	"github.com/dominikbraun/graph"
 	"github.com/ruudiRatlos/s10s"
-	"github.com/ruudiRatlos/s10s/api"
 	"github.com/ruudiRatlos/s10s/mechanics"
+	api "github.com/ruudiRatlos/s10s/openapi"
 )
 
 type routeItem struct {
@@ -31,7 +31,7 @@ func newVert(wp *api.Waypoint, fm api.ShipNavFlightMode) vert {
 	return vert{WP: wp, Refuel: canRefuel(wp), FM: fm}
 }
 
-func (s *state) calcTravelDistance(ctx context.Context, ship *api.Ship, fromSymbol, toSymbol s10s.WaypointSymbol) (int, error) {
+func (s *State) calcTravelDistance(ctx context.Context, ship *api.Ship, fromSymbol, toSymbol s10s.WaypointSymbol) (int, error) {
 	path, err := s.calcNavRoute(ctx, ship, fromSymbol, toSymbol)
 	if err != nil {
 		return 0, err
@@ -45,7 +45,7 @@ func (s *state) calcTravelDistance(ctx context.Context, ship *api.Ship, fromSymb
 	return dist, nil
 }
 
-func (s *state) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.WaypointSymbol) ([]routeItem, error) {
+func (s *State) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.WaypointSymbol) ([]routeItem, error) {
 	fuelCapa := int(ship.Fuel.Capacity)
 	all, err := s.AllWaypoints(ctx, from.SystemSymbol())
 	if err != nil {
@@ -221,7 +221,7 @@ func canRefuel(wp *api.Waypoint) bool {
 	return false
 }
 
-func (s *state) sortByDist(ctx context.Context, ship *api.Ship, wps []*api.Waypoint) (func(a, b *api.Waypoint) int, error) {
+func (s *State) sortByDist(ctx context.Context, ship *api.Ship, wps []*api.Waypoint) (func(a, b *api.Waypoint) int, error) {
 	shipWP := s10s.MustNewWaypointSymbol(ship.Nav.WaypointSymbol)
 	return func(a, b *api.Waypoint) int {
 		aSym := s10s.MustNewWaypointSymbol(a.Symbol)
@@ -232,7 +232,7 @@ func (s *state) sortByDist(ctx context.Context, ship *api.Ship, wps []*api.Waypo
 	}, nil
 }
 
-func (s *state) initWarpGraph(ctx context.Context) error {
+func (s *State) initWarpGraph(ctx context.Context) error {
 	s.warpM.RLock()
 	if s.warpUniverse != nil {
 		s.warpM.RUnlock()
@@ -276,7 +276,7 @@ func (s *state) initWarpGraph(ctx context.Context) error {
 	return nil
 }
 
-func (s *state) calcWarpRoute(ctx context.Context, fuelCapa int, from, to s10s.WaypointSymbol) ([]string, error) {
+func (s *State) calcWarpRoute(ctx context.Context, fuelCapa int, from, to s10s.WaypointSymbol) ([]string, error) {
 	start, err := s.GetSystem(ctx, from.SystemSymbol())
 	if err != nil {
 		return nil, s10s.ErrShipJumpInvalidOrigin
@@ -314,7 +314,7 @@ func (s *state) calcWarpRoute(ctx context.Context, fuelCapa int, from, to s10s.W
 	return path, nil
 }
 
-func (s *state) CalcInterstellarRoute(ctx context.Context, fuelCapa int, from, to s10s.WaypointSymbol) ([]string, error) {
+func (s *State) CalcInterstellarRoute(ctx context.Context, fuelCapa int, from, to s10s.WaypointSymbol) ([]string, error) {
 	jumpPath, err := s.calcInterstellarJumpRoute(ctx, from, to)
 	if err == nil && len(jumpPath) > 0 {
 		return jumpPath, nil
@@ -323,7 +323,7 @@ func (s *state) CalcInterstellarRoute(ctx context.Context, fuelCapa int, from, t
 	//return s.calcWarpRoute(ctx, fuelCapa, from, to)
 }
 
-func (s *state) calcInterstellarJumpRoute(ctx context.Context, from, to s10s.WaypointSymbol) ([]string, error) {
+func (s *State) calcInterstellarJumpRoute(ctx context.Context, from, to s10s.WaypointSymbol) ([]string, error) {
 	jgs, err := s.StellarJumpGatesStatic()
 	if err != nil {
 		return nil, err
