@@ -1,4 +1,4 @@
-package spacetraders
+package s10state
 
 import (
 	"compress/gzip"
@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/ruudiRatlos/s10s"
+	"github.com/ruudiRatlos/s10s/mechanics"
 	api "github.com/ruudiRatlos/s10s/openapi"
 
 	"github.com/dominikbraun/graph"
@@ -225,8 +226,8 @@ func (s *State) updateWaypoint(wp *api.Waypoint, noLock bool) {
 		defer s.wpM.Unlock()
 	}
 
-	sys := s10s.NewSystemSymbol(wp.SystemSymbol)
-	wpSym := s10s.MustNewWaypointSymbol(wp.Symbol)
+	sys := s10s.SystemSymbolFrom(wp)
+	wpSym := s10s.WaypointSymbolFrom(wp)
 	_, e := s.systems[sys]
 	if e {
 		s.systems[sys][wpSym] = wp
@@ -240,8 +241,8 @@ func (s *State) updateWaypoint(wp *api.Waypoint, noLock bool) {
 		}
 		s.systems[sys] = make(map[s10s.WaypointSymbol]*api.Waypoint, len(wps))
 		for _, nwp := range wps {
-			nsys := s10s.SystemSymbol(nwp.SystemSymbol)
-			nwpSym := s10s.MustNewWaypointSymbol(nwp.Symbol)
+			nsys := s10s.SystemSymbolFrom(nwp)
+			nwpSym := s10s.WaypointSymbolFrom(nwp)
 			s.systems[nsys][nwpSym] = nwp
 		}
 		s.systems[sys][wpSym] = wp
@@ -261,7 +262,7 @@ func (s *State) updateWaypoint(wp *api.Waypoint, noLock bool) {
 func (s *State) updateUniverse(sys *api.System) error {
 	s.wpM.Lock()
 	defer s.wpM.Unlock()
-	s.universe[s10s.NewSystemSymbol(sys.Symbol)] = sys
+	s.universe[s10s.SystemSymbolFrom(sys)] = sys
 	return s.saveUniverse(sys)
 }
 
@@ -339,7 +340,7 @@ func (s *State) GetJumpGate(ctx context.Context, wp *api.Waypoint) (*api.JumpGat
 	case nil:
 		return jg, nil
 	default:
-		return s.c.SystemsAPI.GetJumpGate(ctx, s10s.MustNewWaypointSymbol(wp.Symbol))
+		return s.c.SystemsAPI.GetJumpGate(ctx, s10s.WaypointSymbolFrom(wp))
 	}
 }
 
@@ -417,12 +418,12 @@ func (s *State) AllShipyardsStatic(ctx context.Context, sys s10s.SystemSymbol) (
 		return nil, err
 	}
 
-	ms := filterWaypoints(wps, api.WAYPOINTTRAITSYMBOL_SHIPYARD)
+	ms := mechanics.FilterWaypoints(wps, api.WAYPOINTTRAITSYMBOL_SHIPYARD)
 	out := []*api.Shipyard{}
 	for _, wp := range ms {
 		m, err := s.loadShipyard(wp.Symbol)
 		if err != nil {
-			m, err = s.c.SystemsAPI.GetShipyard(ctx, s10s.MustNewWaypointSymbol(wp.Symbol)) //nolint:gosec
+			m, err = s.c.SystemsAPI.GetShipyard(ctx, s10s.WaypointSymbolFrom(wp)) //nolint:gosec
 			if err != nil {
 				return nil, err
 			}
@@ -439,10 +440,10 @@ func (s *State) AllMarketsStatic(ctx context.Context, systemSymbol s10s.SystemSy
 		return nil, err
 	}
 
-	ms := filterWaypoints(wps, api.WAYPOINTTRAITSYMBOL_MARKETPLACE)
+	ms := mechanics.FilterWaypoints(wps, api.WAYPOINTTRAITSYMBOL_MARKETPLACE)
 	out := []*api.Market{}
 	for _, wp := range ms {
-		wpSym := s10s.MustNewWaypointSymbol(wp.Symbol)
+		wpSym := s10s.WaypointSymbolFrom(wp)
 		m, err := s.loadMarket(wpSym)
 		if err != nil {
 			m, err = s.c.SystemsAPI.GetMarket(ctx, wpSym) //nolint:gosec
@@ -466,7 +467,7 @@ func (s *State) AllJumpGates(ctx context.Context, sys s10s.SystemSymbol, incUnde
 
 	jgs := []*api.JumpGate{}
 	for _, wp := range wps {
-		if wp.Type != api.WAYPOINTTYPE_JUMP_GATE || isUncharted(wp) {
+		if wp.Type != api.WAYPOINTTYPE_JUMP_GATE || mechanics.IsUnchartedWP(wp) {
 			continue
 		}
 		if wp.IsUnderConstruction && !incUnderConstruction {
@@ -482,15 +483,6 @@ func (s *State) AllJumpGates(ctx context.Context, sys s10s.SystemSymbol, incUnde
 	return jgs, nil
 }
 
-func isUncharted(wp *api.Waypoint) bool {
-	for _, t := range wp.Traits {
-		if t.Symbol == api.WAYPOINTTRAITSYMBOL_UNCHARTED {
-			return true
-		}
-	}
-	return false
-}
-
 func (s *State) AllShipyards(ctx context.Context, sys s10s.SystemSymbol) ([]*api.Shipyard, error) {
 	wps, err := s.AllWaypoints(ctx, sys)
 	if err != nil {
@@ -498,8 +490,8 @@ func (s *State) AllShipyards(ctx context.Context, sys s10s.SystemSymbol) ([]*api
 	}
 
 	out := []*api.Shipyard{}
-	for _, wp := range filterWaypoints(wps, api.WAYPOINTTRAITSYMBOL_SHIPYARD) {
-		wpSym := s10s.MustNewWaypointSymbol(wp.Symbol)
+	for _, wp := range mechanics.FilterWaypoints(wps, api.WAYPOINTTRAITSYMBOL_SHIPYARD) {
+		wpSym := s10s.WaypointSymbolFrom(wp)
 		sy, err := s.c.SystemsAPI.GetShipyard(ctx, wpSym) //nolint:gosec
 		if err != nil {
 			return nil, err
@@ -531,7 +523,7 @@ func (s *State) AllConstructions(ctx context.Context, sys s10s.SystemSymbol) ([]
 	return sites, nil
 }
 
-func (s *State) findWaypointBySymbol(ctx context.Context, wp s10s.WaypointSymbol) *api.Waypoint {
+func (s *State) FindWaypointBySymbol(ctx context.Context, wp s10s.WaypointSymbol) *api.Waypoint {
 redo:
 	s.wpM.RLock()
 	sys := wp.SystemSymbol()
@@ -548,24 +540,6 @@ redo:
 	s.wpM.RLock()
 	defer s.wpM.RUnlock()
 	return s.systems[sys][wp]
-}
-
-func filterWaypoints(waypoints []*api.Waypoint, criteria api.WaypointTraitSymbol) []*api.Waypoint {
-	out := []*api.Waypoint{}
-	for _, wp := range waypoints {
-		mpF := false
-		for _, t := range wp.Traits {
-			if t.Symbol != criteria {
-				continue
-			}
-			mpF = true
-		}
-		if !mpF {
-			continue
-		}
-		out = append(out, wp)
-	}
-	return out
 }
 
 func (s *State) Dump(ctx context.Context, fName string) (err error) {
@@ -601,7 +575,7 @@ func (s *State) Dump(ctx context.Context, fName string) (err error) {
 	enc := json.NewEncoder(w)
 
 	for sys := range systems {
-		sysSym := s10s.NewSystemSymbol(sys.Symbol)
+		sysSym := s10s.SystemSymbolFrom(sys)
 		wps, err := s.AllWaypoints(ctx, sysSym)
 		if err != nil {
 			return err
@@ -626,4 +600,40 @@ func (s *State) Dump(ctx context.Context, fName string) (err error) {
 		}
 	}
 	return w.Close()
+}
+
+func (state *State) FindInterstellarGood(ctx context.Context, good api.TradeSymbol) (<-chan *api.Market, error) {
+	out := make(chan *api.Market)
+	go func() {
+		defer close(out)
+		for key := range state.d.KeysPrefix("wp-", nil) {
+			systemSymbol := s10s.NewSystemSymbol(key[3 : len(key)-5])
+			ms, err := state.AllMarketsStatic(ctx, systemSymbol)
+			if err != nil {
+				state.l.DebugContext(ctx, "could not load markets", "system", systemSymbol, "error", err)
+				continue
+			}
+			for _, m := range ms {
+				switch {
+				case hasGood(m.Imports, good):
+					fallthrough
+				case hasGood(m.Exchange, good):
+					fallthrough
+				case hasGood(m.Exports, good):
+					out <- m
+				}
+			}
+		}
+	}()
+	return out, nil
+}
+
+func hasGood(goods []api.TradeGood, g api.TradeSymbol) bool {
+	for _, s := range goods {
+		if s.Symbol != g {
+			continue
+		}
+		return true
+	}
+	return false
 }

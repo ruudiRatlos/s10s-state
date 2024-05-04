@@ -1,4 +1,4 @@
-package spacetraders
+package s10state
 
 import (
 	"reflect"
@@ -13,6 +13,9 @@ func Test(t *testing.T) {
 		{"sys-X1-FK38.data", []string{"X1", "FK", "FK38"}},
 		{"wp-X1-FK38-A02.data", []string{"X1", "FK", "FK38"}},
 		{"sys-X1-A7.data", []string{"X1", "A7", "A7"}},
+		// panic cases
+		{"sys-X1-Az", []string{}},
+		{"sys-X1.data", []string{}},
 	}
 
 	for _, tc := range tcs {

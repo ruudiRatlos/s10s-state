@@ -1,4 +1,4 @@
-package spacetraders
+package s10state
 
 import (
 	"cmp"
@@ -12,64 +12,64 @@ import (
 	api "github.com/ruudiRatlos/s10s/openapi"
 )
 
-type routeItem struct {
-	from, to *api.Waypoint
-	dist     int
-	duration time.Duration
-	fm       api.ShipNavFlightMode
-	refuel   bool
+type RouteItem struct {
+	From, To *api.Waypoint
+	Dist     int
+	Duration time.Duration
+	FM       api.ShipNavFlightMode
+	Refuel   bool
 }
 
-type vert struct {
+type Vert struct {
 	WP     *api.Waypoint
 	Refuel bool
 	FM     api.ShipNavFlightMode
-	start  bool
+	Start  bool
 }
 
-func newVert(wp *api.Waypoint, fm api.ShipNavFlightMode) vert {
-	return vert{WP: wp, Refuel: canRefuel(wp), FM: fm}
+func NewVert(wp *api.Waypoint, fm api.ShipNavFlightMode) Vert {
+	return Vert{WP: wp, Refuel: canRefuel(wp), FM: fm}
 }
 
-func (s *State) calcTravelDistance(ctx context.Context, ship *api.Ship, fromSymbol, toSymbol s10s.WaypointSymbol) (int, error) {
-	path, err := s.calcNavRoute(ctx, ship, fromSymbol, toSymbol)
+func (s *State) CalcTravelDistance(ctx context.Context, ship *api.Ship, fromSymbol, toSymbol s10s.WaypointSymbol) (int, error) {
+	path, err := s.CalcNavRoute(ctx, ship, fromSymbol, toSymbol)
 	if err != nil {
 		return 0, err
 	}
 
 	dist := 0
 	for i := 0; i < len(path); i++ {
-		dist += path[i].dist
+		dist += path[i].Dist
 	}
 
 	return dist, nil
 }
 
-func (s *State) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.WaypointSymbol) ([]routeItem, error) {
+func (s *State) CalcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.WaypointSymbol) ([]RouteItem, error) {
 	fuelCapa := int(ship.Fuel.Capacity)
 	all, err := s.AllWaypoints(ctx, from.SystemSymbol())
 	if err != nil {
 		return nil, err
 	}
-	source := s.findWaypointBySymbol(ctx, from)
+	source := s.FindWaypointBySymbol(ctx, from)
 	if source == nil {
 		return nil, fmt.Errorf("origin %q not found", from)
 	}
-	target := s.findWaypointBySymbol(ctx, to)
+	target := s.FindWaypointBySymbol(ctx, to)
 	if target == nil {
 		return nil, fmt.Errorf("destination %q not found, len(all)=%d", to, len(all))
 	}
 
-	wpHash := func(v vert) vert {
+	wpHash := func(v Vert) Vert {
 		return v
 	}
 
 	g := graph.New(wpHash, graph.Weighted(), graph.Directed())
 
-	start := newVert(source, api.SHIPNAVFLIGHTMODE_CRUISE)
-	start.start = true
-	end := newVert(target, api.SHIPNAVFLIGHTMODE_CRUISE)
-	end.start = true
+	start := NewVert(source, api.SHIPNAVFLIGHTMODE_CRUISE)
+	start.Start = true
+	end := NewVert(target, api.SHIPNAVFLIGHTMODE_CRUISE)
+	end.Start = true
 	err = g.AddVertex(start)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (s *State) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 
 	for _, s := range all {
 		for _, fm := range allFlightModes {
-			sv := newVert(s, fm)
+			sv := NewVert(s, fm)
 			err = g.AddVertex(sv)
 			if err != nil {
 				return nil, err
@@ -106,12 +106,12 @@ func (s *State) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 			}
 		}
 		for _, fm := range allFlightModes {
-			sv := newVert(s, fm)
+			sv := NewVert(s, fm)
 			for _, ofm := range allFlightModes {
 				if fm == ofm {
 					continue
 				}
-				err := g.AddEdge(sv, newVert(s, ofm), graph.EdgeWeight(0))
+				err := g.AddEdge(sv, NewVert(s, ofm), graph.EdgeWeight(0))
 				if err != nil {
 					return nil, err
 				}
@@ -125,7 +125,7 @@ func (s *State) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 		//return dist
 	}
 
-	fuelstations := filterWaypoints(all, api.WAYPOINTTRAITSYMBOL_MARKETPLACE)
+	fuelstations := mechanics.FilterWaypoints(all, api.WAYPOINTTRAITSYMBOL_MARKETPLACE)
 
 	minFuelLastLeg := 0
 	if !canRefuel(target) {
@@ -163,7 +163,7 @@ func (s *State) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 					continue
 				}
 				weight := calcWeight(s, t, fm)
-				_ = g.AddEdge(newVert(s, fm), newVert(t, fm), graph.EdgeWeight(weight))
+				_ = g.AddEdge(NewVert(s, fm), NewVert(t, fm), graph.EdgeWeight(weight))
 			}
 		}
 	}
@@ -178,7 +178,7 @@ func (s *State) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 					continue
 				}
 				weight := calcWeight(source, t, fm)
-				_ = g.AddEdge(newVert(source, fm), newVert(t, fm), graph.EdgeWeight(weight))
+				_ = g.AddEdge(NewVert(source, fm), NewVert(t, fm), graph.EdgeWeight(weight))
 			}
 		}
 	}
@@ -188,7 +188,7 @@ func (s *State) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 		return nil, err
 	}
 
-	out := make([]routeItem, 0, len(path)-3)
+	out := make([]RouteItem, 0, len(path)-3)
 	for i := 1; i < len(path)-2; i++ {
 		from := path[i].WP
 		to := path[i+1].WP
@@ -197,13 +197,13 @@ func (s *State) calcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 		}
 		dist := int(mechanics.Distance(from, to))
 		fm := path[i].FM
-		out = append(out, routeItem{
-			from:     from,
-			to:       to,
-			dist:     dist,
-			fm:       fm,
-			refuel:   path[i].Refuel,
-			duration: mechanics.CalcTravelTimeRaw(ship.Engine.Speed, fm, dist),
+		out = append(out, RouteItem{
+			From:     from,
+			To:       to,
+			Dist:     dist,
+			FM:       fm,
+			Refuel:   path[i].Refuel,
+			Duration: mechanics.CalcTravelTimeRaw(ship.Engine.Speed, fm, dist),
 		})
 	}
 	//file, _ := os.Create("./simple.gv")
@@ -221,13 +221,13 @@ func canRefuel(wp *api.Waypoint) bool {
 	return false
 }
 
-func (s *State) sortByDist(ctx context.Context, ship *api.Ship, wps []*api.Waypoint) (func(a, b *api.Waypoint) int, error) {
-	shipWP := s10s.MustNewWaypointSymbol(ship.Nav.WaypointSymbol)
+func (s *State) SortByDist(ctx context.Context, ship *api.Ship, wps []*api.Waypoint) (func(a, b *api.Waypoint) int, error) {
+	shipWP := s10s.WaypointSymbolFrom(ship)
 	return func(a, b *api.Waypoint) int {
-		aSym := s10s.MustNewWaypointSymbol(a.Symbol)
-		bSym := s10s.MustNewWaypointSymbol(b.Symbol)
-		distA, _ := s.calcTravelDistance(ctx, ship, shipWP, aSym)
-		distB, _ := s.calcTravelDistance(ctx, ship, shipWP, bSym)
+		aSym := s10s.WaypointSymbolFrom(a)
+		bSym := s10s.WaypointSymbolFrom(b)
+		distA, _ := s.CalcTravelDistance(ctx, ship, shipWP, aSym)
+		distB, _ := s.CalcTravelDistance(ctx, ship, shipWP, bSym)
 		return cmp.Compare(distA, distB)
 	}, nil
 }
@@ -276,7 +276,7 @@ func (s *State) initWarpGraph(ctx context.Context) error {
 	return nil
 }
 
-func (s *State) calcWarpRoute(ctx context.Context, fuelCapa int, from, to s10s.WaypointSymbol) ([]string, error) {
+func (s *State) CalcWarpRoute(ctx context.Context, fuelCapa int, from, to s10s.WaypointSymbol) ([]string, error) {
 	start, err := s.GetSystem(ctx, from.SystemSymbol())
 	if err != nil {
 		return nil, s10s.ErrShipJumpInvalidOrigin
@@ -315,7 +315,7 @@ func (s *State) calcWarpRoute(ctx context.Context, fuelCapa int, from, to s10s.W
 }
 
 func (s *State) CalcInterstellarRoute(ctx context.Context, fuelCapa int, from, to s10s.WaypointSymbol) ([]string, error) {
-	jumpPath, err := s.calcInterstellarJumpRoute(ctx, from, to)
+	jumpPath, err := s.CalcInterstellarJumpRoute(ctx, from, to)
 	if err == nil && len(jumpPath) > 0 {
 		return jumpPath, nil
 	}
@@ -323,7 +323,7 @@ func (s *State) CalcInterstellarRoute(ctx context.Context, fuelCapa int, from, t
 	//return s.calcWarpRoute(ctx, fuelCapa, from, to)
 }
 
-func (s *State) calcInterstellarJumpRoute(ctx context.Context, from, to s10s.WaypointSymbol) ([]string, error) {
+func (s *State) CalcInterstellarJumpRoute(ctx context.Context, from, to s10s.WaypointSymbol) ([]string, error) {
 	jgs, err := s.StellarJumpGatesStatic()
 	if err != nil {
 		return nil, err
@@ -348,13 +348,13 @@ func (s *State) calcInterstellarJumpRoute(ctx context.Context, from, to s10s.Way
 
 	for _, jg := range jgs {
 		jgSym := s10s.WaypointSymbol(jg.Symbol)
-		wp := s.findWaypointBySymbol(ctx, jgSym)
+		wp := s.FindWaypointBySymbol(ctx, jgSym)
 		if wp.IsUnderConstruction {
 			continue
 		}
 		for _, con := range jg.Connections {
-			conSym := s10s.MustNewWaypointSymbol(con)
-			wp = s.findWaypointBySymbol(ctx, conSym)
+			conSym := s10s.MustWaypointSymbolFromValue(con)
+			wp = s.FindWaypointBySymbol(ctx, conSym)
 			if wp.IsUnderConstruction {
 				continue
 			}

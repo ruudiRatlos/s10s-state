@@ -1,4 +1,4 @@
-package spacetraders
+package s10state
 
 import (
 	"reflect"

@@ -1,4 +1,4 @@
-package spacetraders
+package s10state
 
 import (
 	"context"
@@ -39,7 +39,7 @@ func (s *State) cacheKeySystem(symbol s10s.SystemSymbol) string {
 	return fmt.Sprintf("wp-%s.data", symbol)
 }
 
-func (s *State) cacheAgeSystem(ctx context.Context, symbol s10s.SystemSymbol) time.Time {
+func (s *State) CacheAgeSystem(ctx context.Context, symbol s10s.SystemSymbol) time.Time {
 	key := s.cacheKeySystem(symbol)
 	fPath := []string{s.dbPath}
 	fPath = append(fPath, treeTransform(key)...)
@@ -70,7 +70,7 @@ func (s *State) writeState(ctx context.Context) error {
 		default:
 		}
 
-		age := s.cacheAgeSystem(ctx, sys)
+		age := s.CacheAgeSystem(ctx, sys)
 		if age.Equal(lastUpdate) || age.After(lastUpdate) {
 			continue
 		}
@@ -174,13 +174,13 @@ func (s *State) loadJumpGate(wpSymbol string) (*api.JumpGate, error) {
 	return jg, nil
 }
 
-func (s *State) hasWaypointsCached(ctx context.Context, sysSymbol string) bool {
-	key := fmt.Sprintf("wp-%s.data", sysSymbol)
+func (s *State) HasWaypointsCached(ctx context.Context, sysSymbol s10s.SystemSymbol) bool {
+	key := fmt.Sprintf("wp-%s.data", sysSymbol.String())
 	return s.d.Has(key)
 }
 
-func (s *State) hasSystemCached(ctx context.Context, sysSymbol string) bool {
-	key := fmt.Sprintf("sys-%s.data", sysSymbol)
+func (s *State) HasSystemCached(ctx context.Context, sysSymbol s10s.SystemSymbol) bool {
+	key := fmt.Sprintf("sys-%s.data", sysSymbol.String())
 	return s.d.Has(key)
 }
 
@@ -286,7 +286,7 @@ func (s *State) loadWaypoints(ctx context.Context, systemSymbol s10s.SystemSymbo
 			for _, wp := range waypoints {
 				s.updateWaypoint(wp, true)
 			}
-			s.sysAge[systemSymbol] = s.cacheAgeSystem(ctx, systemSymbol)
+			s.sysAge[systemSymbol] = s.CacheAgeSystem(ctx, systemSymbol)
 			s.wpM.Unlock()
 			return nil
 		}
@@ -384,6 +384,25 @@ func (state *State) AllSystemsStatic(ctx context.Context) (<-chan *api.System, e
 				state.l.WarnContext(ctx, "error on GetSystem - ignored", "error", err)
 			}
 			out <- sys
+		}
+	}()
+	return out, nil
+}
+
+func (s *State) FindInterstellarShipyards(ctx context.Context) (<-chan *api.Shipyard, error) {
+	out := make(chan *api.Shipyard)
+	go func() {
+		defer close(out)
+		for key := range s.d.KeysPrefix("wp-", nil) {
+			systemSymbol := s10s.NewSystemSymbol(key[3 : len(key)-5])
+			sys, err := s.AllShipyardsStatic(ctx, systemSymbol)
+			if err != nil {
+				s.l.DebugContext(ctx, "could not load shipyards", "system", systemSymbol, "error", err)
+				continue
+			}
+			for _, sy := range sys {
+				out <- sy
+			}
 		}
 	}()
 	return out, nil
