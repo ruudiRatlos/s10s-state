@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test(t *testing.T) {
+func TestTransform(t *testing.T) {
 	tcs := []struct {
 		i string
 		e []string
