@@ -299,20 +299,6 @@ func (s *State) loadUniverse(sysSymbol s10s.SystemSymbol) error {
 	return nil
 }
 
-func (s *State) isValidSystemSymbol(sysSymbol string) bool {
-	cmp := strings.SplitN(sysSymbol, "-", 2)
-	if len(cmp) < 2 {
-		return false
-	}
-	if len(cmp[0]) != 2 {
-		return false
-	}
-	if len(cmp[1]) < 2 || len(cmp[1]) > 4 {
-		return false
-	}
-	return true
-}
-
 func (s *State) GetSystem(ctx context.Context, sysSym s10s.SystemSymbol) (*api.System, error) {
 redo:
 	s.wpM.RLock()
