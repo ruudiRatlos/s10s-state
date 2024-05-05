@@ -234,7 +234,7 @@ func (s *State) updateWaypoint(wp *api.Waypoint, noLock bool) {
 		s.sysAge[sys] = time.Now()
 		delete(s.updates, wpSym)
 	} else {
-		wps, err := s.AllWaypointsNoCache(context.Background(), wp.SystemSymbol)
+		wps, err := s.AllWaypointsStatic(context.Background(), s10s.SystemSymbolFrom(wp))
 		if err != nil {
 			s.updates[wpSym] = wp
 			return
@@ -315,7 +315,7 @@ redo:
 		//c.l.DebugContext(ctx, "uni cache hit", "system", sysSymbol)
 		goto redo
 	}
-	s.l.DebugContext(ctx, "uni cache miss", "system", sysSym)
+	//s.l.DebugContext(ctx, "uni cache miss", "system", sysSym)
 
 	return s.c.SystemsAPI.GetSystem(ctx, sysSym)
 }
@@ -421,26 +421,24 @@ func (s *State) AllShipyardsStatic(ctx context.Context, sys s10s.SystemSymbol) (
 }
 
 func (s *State) AllMarketsStatic(ctx context.Context, systemSymbol s10s.SystemSymbol) ([]*api.Market, error) {
-	wps, err := s.AllWaypoints(ctx, systemSymbol)
+	wps, err := s.AllWaypointsStatic(ctx, systemSymbol)
 	if err != nil {
 		return nil, err
 	}
 
 	ms := mechanics.FilterWaypoints(wps, api.WAYPOINTTRAITSYMBOL_MARKETPLACE)
 	out := []*api.Market{}
+	var errs error = nil
 	for _, wp := range ms {
 		wpSym := s10s.WaypointSymbolFrom(wp)
 		m, err := s.loadMarket(wpSym)
 		if err != nil {
-			m, err = s.c.SystemsAPI.GetMarket(ctx, wpSym) //nolint:gosec
-			if err != nil {
-				return nil, err
-			}
+			errs = errors.Join(errs, err)
 		}
 		out = append(out, m) //nolint:gosec
 	}
 
-	return out, nil
+	return out, errs
 }
 
 // AllJumpGates returns the /jump-gate info for all jumpGates in the system
@@ -460,6 +458,32 @@ func (s *State) AllJumpGates(ctx context.Context, sys s10s.SystemSymbol, incUnde
 			continue
 		}
 		jg, err := s.GetJumpGate(ctx, wp) //nolint:gosec
+		if err != nil {
+			return nil, err
+		}
+		jgs = append(jgs, jg) //nolint:gosec
+	}
+
+	return jgs, nil
+}
+
+// AllJumpGatesStatic returns the /jump-gate info for all jumpGates currently on disk
+// Uncharted JumpGates are NOT returned
+func (s *State) AllJumpGatesStatic(ctx context.Context, sys s10s.SystemSymbol, incUnderConstruction bool) ([]*api.JumpGate, error) {
+	wps, err := s.AllWaypointsStatic(ctx, sys)
+	if err != nil {
+		return nil, err
+	}
+
+	jgs := []*api.JumpGate{}
+	for _, wp := range wps {
+		if wp.Type != api.WAYPOINTTYPE_JUMP_GATE || mechanics.IsUnchartedWP(wp) {
+			continue
+		}
+		if wp.IsUnderConstruction && !incUnderConstruction {
+			continue
+		}
+		jg, err := s.loadJumpGate(wp.Symbol)
 		if err != nil {
 			return nil, err
 		}
@@ -562,17 +586,17 @@ func (s *State) Dump(ctx context.Context, fName string) (err error) {
 
 	for sys := range systems {
 		sysSym := s10s.SystemSymbolFrom(sys)
-		wps, err := s.AllWaypoints(ctx, sysSym)
+		wps, err := s.AllWaypointsStatic(ctx, sysSym)
 		if err != nil {
-			return err
+			wps = []*api.Waypoint{}
 		}
 		markets, err := s.AllMarketsStatic(ctx, sysSym)
 		if err != nil {
-			return err
+			markets = []*api.Market{}
 		}
-		jgs, err := s.AllJumpGates(ctx, sysSym, true)
+		jgs, err := s.AllJumpGatesStatic(ctx, sysSym, true)
 		if err != nil {
-			return err
+			jgs = []*api.JumpGate{}
 		}
 
 		err = enc.Encode(map[string]any{

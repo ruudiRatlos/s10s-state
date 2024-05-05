@@ -160,6 +160,7 @@ func (s *State) loadMarket(wpSymbol s10s.WaypointSymbol) (*api.Market, error) {
 	}
 	return m, nil
 }
+
 func (s *State) loadJumpGate(wpSymbol string) (*api.JumpGate, error) {
 	key := fmt.Sprintf("jg-%s.data", wpSymbol)
 	b, err := s.d.Read(key)
@@ -316,9 +317,9 @@ func (s *State) loadWaypoints(ctx context.Context, systemSymbol s10s.SystemSymbo
 	return nil
 }
 
-func (s *State) AllWaypointsNoCache(ctx context.Context, systemSymbol string) ([]*api.Waypoint, error) {
+func (s *State) AllWaypointsStatic(ctx context.Context, sys s10s.SystemSymbol) ([]*api.Waypoint, error) {
 	waypoints := []*api.Waypoint{}
-	key := fmt.Sprintf("wp-%s.data", systemSymbol)
+	key := fmt.Sprintf("wp-%s.data", sys.String())
 	b, err := s.d.Read(key)
 	if err != nil {
 		return nil, err
@@ -373,6 +374,7 @@ func (s *State) StellarJumpGatesStatic() ([]*api.JumpGate, error) {
 	return sites, nil
 }
 
+// AllSystemsStatic returns a channel with all systems currently on disk
 func (state *State) AllSystemsStatic(ctx context.Context) (<-chan *api.System, error) {
 	out := make(chan *api.System)
 	go func() {
