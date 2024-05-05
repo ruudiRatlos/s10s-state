@@ -398,6 +398,17 @@ func (s *State) GetMarketStatic(ctx context.Context, wpSymbol s10s.WaypointSymbo
 	return m, nil
 }
 
+func (s *State) GetShipyardStatic(ctx context.Context, wpSymbol s10s.WaypointSymbol) (*api.Shipyard, error) {
+	m, err := s.loadShipyard(wpSymbol.String())
+	if err != nil {
+		m, err = s.c.SystemsAPI.GetShipyard(ctx, wpSymbol) //nolint:gosec
+		if err != nil {
+			return nil, err
+		}
+	}
+	return m, nil
+}
+
 func (s *State) AllShipyardsStatic(ctx context.Context, sys s10s.SystemSymbol) ([]*api.Shipyard, error) {
 	wps, err := s.AllWaypoints(ctx, sys)
 	if err != nil {
