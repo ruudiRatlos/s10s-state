@@ -379,7 +379,7 @@ func (state *State) AllSystemsStatic(ctx context.Context) (<-chan *api.System, e
 		defer close(out)
 		for key := range state.d.KeysPrefix("sys-", nil) {
 			systemSymbol := key[4 : len(key)-5]
-			sys, err := state.GetSystem(ctx, s10s.NewSystemSymbol(systemSymbol))
+			sys, err := state.GetSystem(ctx, s10s.SystemSymbolFromValue(systemSymbol))
 			if err != nil {
 				state.l.WarnContext(ctx, "error on GetSystem - ignored", "error", err)
 			}
@@ -394,7 +394,7 @@ func (s *State) FindInterstellarShipyards(ctx context.Context) (<-chan *api.Ship
 	go func() {
 		defer close(out)
 		for key := range s.d.KeysPrefix("wp-", nil) {
-			systemSymbol := s10s.NewSystemSymbol(key[3 : len(key)-5])
+			systemSymbol := s10s.SystemSymbolFromValue(key[3 : len(key)-5])
 			sys, err := s.AllShipyardsStatic(ctx, systemSymbol)
 			if err != nil {
 				s.l.DebugContext(ctx, "could not load shipyards", "system", systemSymbol, "error", err)

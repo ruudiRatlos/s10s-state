@@ -294,7 +294,7 @@ func (s *State) loadUniverse(sysSymbol s10s.SystemSymbol) error {
 		return err
 	}
 	s.wpM.Lock()
-	s.universe[s10s.NewSystemSymbol(sys.Symbol)] = sys
+	s.universe[s10s.SystemSymbolFromValue(sys.Symbol)] = sys
 	s.wpM.Unlock()
 	return nil
 }
@@ -593,7 +593,7 @@ func (state *State) FindInterstellarGood(ctx context.Context, good api.TradeSymb
 	go func() {
 		defer close(out)
 		for key := range state.d.KeysPrefix("wp-", nil) {
-			systemSymbol := s10s.NewSystemSymbol(key[3 : len(key)-5])
+			systemSymbol := s10s.SystemSymbolFromValue(key[3 : len(key)-5])
 			ms, err := state.AllMarketsStatic(ctx, systemSymbol)
 			if err != nil {
 				state.l.DebugContext(ctx, "could not load markets", "system", systemSymbol, "error", err)
