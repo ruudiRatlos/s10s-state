@@ -452,6 +452,27 @@ func (s *State) AllMarketsStatic(ctx context.Context, systemSymbol s10s.SystemSy
 	return out, errs
 }
 
+func (s *State) AllMarkets(ctx context.Context, systemSymbol s10s.SystemSymbol) ([]*api.Market, error) {
+	wps, err := s.AllWaypoints(ctx, systemSymbol)
+	if err != nil {
+		return nil, err
+	}
+
+	ms := mechanics.FilterWaypoints(wps, api.WAYPOINTTRAITSYMBOL_MARKETPLACE)
+	out := []*api.Market{}
+	var errs error = nil
+	for _, wp := range ms {
+		wpSym := s10s.WaypointSymbolFrom(wp)
+		m, err := s.c.SystemsAPI.GetMarket(ctx, wpSym)
+		if err != nil {
+			errs = errors.Join(errs, err)
+		}
+		out = append(out, m) //nolint:gosec
+	}
+
+	return out, errs
+}
+
 // AllJumpGates returns the /jump-gate info for all jumpGates in the system
 // Uncharted JumpGates are NOT returned
 func (s *State) AllJumpGates(ctx context.Context, sys s10s.SystemSymbol, incUnderConstruction bool) ([]*api.JumpGate, error) {
