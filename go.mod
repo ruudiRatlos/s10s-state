@@ -7,7 +7,7 @@ require (
 	github.com/dsnet/compress v0.0.1
 	github.com/gookit/event v1.1.2
 	github.com/peterbourgon/diskv/v3 v3.0.1
-	github.com/ruudiRatlos/s10s v1.0.0-alpha.6
+	github.com/ruudiRatlos/s10s v1.0.0-alpha.7
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	golang.org/x/sync v0.7.0
 )
