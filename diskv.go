@@ -385,7 +385,11 @@ func (state *State) AllSystemsStatic(ctx context.Context) (<-chan *api.System, e
 			if err != nil {
 				state.l.WarnContext(ctx, "error on GetSystem - ignored", "error", err)
 			}
-			out <- sys
+			select {
+			case out <- sys:
+			case <-ctx.Done():
+				return
+			}
 		}
 	}()
 	return out, nil
@@ -403,7 +407,11 @@ func (s *State) FindInterstellarShipyards(ctx context.Context) (<-chan *api.Ship
 				continue
 			}
 			for _, sy := range sys {
-				out <- sy
+				select {
+				case out <- sy:
+				case <-ctx.Done():
+					return
+				}
 			}
 		}
 	}()
