@@ -79,6 +79,7 @@ func (s *State) Ships() []*api.Ship {
 	defer s.sM.RUnlock()
 	out := make([]*api.Ship, len(s.ships))
 	for i := range s.ships {
+		out[i] = &api.Ship{}
 		s10s.CopyShipState(out[i], s.ships[i])
 	}
 	return out
