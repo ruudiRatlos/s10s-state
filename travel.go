@@ -358,7 +358,17 @@ func (s *State) CalcInterstellarJumpRoute(ctx context.Context, from, to s10s.Way
 			if wp.IsUnderConstruction {
 				continue
 			}
+			// uncharted jump gates can be jumped to, but are not returned
+			// by StellarJumpGatesStatic
+			_ = universe.AddVertex(con)
 			_ = universe.AddEdge(jg.Symbol, con)
+
+			if conSym.SystemSymbol().Equals(from.SystemSymbol()) {
+				start = con
+			}
+			if conSym.SystemSymbol().Equals(to.SystemSymbol()) {
+				end = con
+			}
 		}
 	}
 
