@@ -349,6 +349,12 @@ func (s *State) CalcInterstellarJumpRoute(ctx context.Context, from, to s10s.Way
 	for _, jg := range jgs {
 		jgSym := s10s.WaypointSymbol(jg.Symbol)
 		wp := s.FindWaypointBySymbol(ctx, jgSym)
+		if wp == nil {
+			wp, err = s.c.SystemsAPI.GetWaypoint(ctx, jgSym)
+			if err != nil {
+				return nil, err
+			}
+		}
 		if wp.IsUnderConstruction {
 			continue
 		}
