@@ -20,16 +20,6 @@ github.com/peterbourgon/diskv/v3 v3.0.1 h1:x06SQA46+PKIUftmEujdwSEpIx8kR+M9eLYsU
 github.com/peterbourgon/diskv/v3 v3.0.1/go.mod h1:kJ5Ny7vLdARGU3WUuy6uzO6T0nb/2gWcT1JiBvRmb5o=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.3 h1:5bLBbUQqp9SEorBAKgQ642GShUjOblrwA2JAbd6xkFE=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.3/go.mod h1:z28YOTM2eUwF6+G018OpF5Pc5+tBn17gmrTSDU60OCc=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.4 h1:g88WfwbwaLgKIQKgAav0qcl2DUsYidZ1CoExwk6RytY=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.4/go.mod h1:6wzaJ3BO+dAjCaI7MBkL356+HoJObF4MPcktHSoqaFc=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.5 h1:DcgTWYnrpOesafHhUg7vXcoR+6aeCEX3saoId2mEno0=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.5/go.mod h1:6wzaJ3BO+dAjCaI7MBkL356+HoJObF4MPcktHSoqaFc=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.6 h1:E6wHk3toURcZGHBxMjovapqpYsvfwlW1phM7YYZgzqs=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.6/go.mod h1:6wzaJ3BO+dAjCaI7MBkL356+HoJObF4MPcktHSoqaFc=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.7 h1:MSg4ZUQ7XNKu/ZcCm86B5NRdWJJbUMk1K2/nMZ5jn70=
-github.com/ruudiRatlos/s10s v1.0.0-alpha.7/go.mod h1:6wzaJ3BO+dAjCaI7MBkL356+HoJObF4MPcktHSoqaFc=
 github.com/ruudiRatlos/s10s v1.0.0-alpha.8 h1:eWauGMPtz7DELlDTeyItauv6tSMZhHJCoficqpPK8no=
 github.com/ruudiRatlos/s10s v1.0.0-alpha.8/go.mod h1:6wzaJ3BO+dAjCaI7MBkL356+HoJObF4MPcktHSoqaFc=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=

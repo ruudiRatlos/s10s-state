@@ -1,7 +1,6 @@
 package s10state
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -323,11 +322,10 @@ func (s *State) loadAgents(ctx context.Context) ([]*api.Agent, error) {
 	if key == "" {
 		return nil, errors.New("agents.data missing")
 	}
-	b, err := s.d.Read(key)
+	r, err := s.d.ReadStream(key, true)
 	if err != nil {
 		return nil, err
 	}
-	r := bytes.NewReader(b)
 	dec := msgpack.NewDecoder(r)
 	out := []*api.Agent{}
 	for {
@@ -385,6 +383,74 @@ func (s *State) saveAgents(ctx context.Context, agents <-chan *api.Agent) error 
 	return writeErr
 }
 
+func (s *State) loadSystemsList(ctx context.Context) (<-chan *api.System, error) {
+	key := s.d.ReadString("systems.data")
+	if key == "" {
+		return nil, errors.New("systems.data missing")
+	}
+	r, err := s.d.ReadStream(key, true)
+	if err != nil {
+		return nil, err
+	}
+	out := make(chan *api.System)
+	go func() {
+		defer close(out)
+		dec := msgpack.NewDecoder(r)
+		for {
+			var a api.System
+			err := dec.Decode(&a)
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			if err != nil {
+				s.l.DebugContext(ctx, "systemsList decoder failed", "err", err)
+				break
+			}
+			select {
+			case out <- &a:
+			case <-ctx.Done():
+			}
+		}
+	}()
+	return out, nil
+}
+
+func (s *State) saveSystemsList(ctx context.Context, systems <-chan *api.System) error {
+	key := fmt.Sprintf("systems_%v_%v.data",
+		time.Now().UnixMilli(), os.Getpid())
+	pr, pw := io.Pipe()
+	g := errgroup.Group{}
+	g.Go(func() error {
+		return s.d.WriteStream(key, pr, false)
+	})
+	g.Go(func() error {
+		enc := msgpack.NewEncoder(pw)
+		var err error
+	loop:
+		for {
+			select {
+			case a, ok := <-systems:
+				if !ok {
+					break loop
+				}
+				err = enc.Encode(*a)
+				if err != nil {
+					break loop
+				}
+			case <-ctx.Done():
+				break loop
+			}
+		}
+		wErr := pw.Close()
+		return errors.Join(wErr, err)
+	})
+	err := g.Wait()
+	if err != nil {
+		return err
+	}
+	writeErr := s.d.WriteString("systems.data", key)
+	return writeErr
+}
 func (s *State) AllWaypointsStatic(ctx context.Context, sys s10s.SystemSymbol) ([]*api.Waypoint, error) {
 	waypoints := []*api.Waypoint{}
 	key := fmt.Sprintf("wp-%s.data", sys.String())
