@@ -333,7 +333,7 @@ func (s *State) loadAgents(ctx context.Context) ([]*api.Agent, error) {
 	for {
 		var a api.Agent
 		err := dec.Decode(&a)
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		if err != nil {
