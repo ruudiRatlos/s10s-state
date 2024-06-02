@@ -1,6 +1,7 @@
 package s10state
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -315,6 +316,73 @@ func (s *State) loadWaypoints(ctx context.Context, systemSymbol s10s.SystemSymbo
 	}
 
 	return nil
+}
+
+func (s *State) loadAgents(ctx context.Context) ([]*api.Agent, error) {
+	key := s.d.ReadString("agents.data")
+	if key == "" {
+		return nil, errors.New("agents.data missing")
+	}
+	b, err := s.d.Read(key)
+	if err != nil {
+		return nil, err
+	}
+	r := bytes.NewReader(b)
+	dec := msgpack.NewDecoder(r)
+	out := []*api.Agent{}
+	for {
+		var a api.Agent
+		err := dec.Decode(&a)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, &a)
+	}
+	return out, nil
+}
+
+func (s *State) saveAgents(ctx context.Context, agents <-chan *api.Agent) error {
+	key := fmt.Sprintf("agents_%v_%v.data",
+		time.Now().UnixMilli(), os.Getpid())
+	s.l.DebugContext(ctx, "writing agents cache", "key", key)
+	pr, pw := io.Pipe()
+	g := errgroup.Group{}
+	g.Go(func() error {
+		return s.d.WriteStream(key, pr, false)
+	})
+	g.Go(func() error {
+		enc := msgpack.NewEncoder(pw)
+		var err error
+	loop:
+		for {
+			select {
+			case a, ok := <-agents:
+				if !ok {
+					break loop
+				}
+				err = enc.Encode(*a)
+				if err != nil {
+					break loop
+				}
+			case <-ctx.Done():
+				break loop
+			}
+		}
+		wErr := pw.Close()
+		return errors.Join(wErr, err)
+	})
+	err := g.Wait()
+	s.l.DebugContext(ctx, "wrote stream", "err", err)
+	if err != nil {
+		return err
+	}
+	s.l.DebugContext(ctx, "committing key", "key", key)
+	writeErr := s.d.WriteString("agents.data", key)
+	s.l.DebugContext(ctx, "commited key", "key", key, "err", writeErr)
+	return writeErr
 }
 
 func (s *State) AllWaypointsStatic(ctx context.Context, sys s10s.SystemSymbol) ([]*api.Waypoint, error) {
