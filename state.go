@@ -653,8 +653,11 @@ func (state *State) FindInterstellarGood(ctx context.Context, good api.TradeSymb
 			systemSymbol := s10s.SystemSymbolFromValue(key[3 : len(key)-5])
 			ms, err := state.AllMarketsStatic(ctx, systemSymbol)
 			if err != nil {
-				state.l.DebugContext(ctx, "could not load markets", "system", systemSymbol, "error", err)
-				continue
+				ms, err = state.AllMarkets(ctx, systemSymbol)
+				if err != nil {
+					state.l.DebugContext(ctx, "could not load markets", "system", systemSymbol, "error", err)
+					continue
+				}
 			}
 			for _, m := range ms {
 				switch {
