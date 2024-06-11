@@ -3,6 +3,7 @@ package s10state
 import (
 	"context"
 
+	"github.com/ruudiRatlos/s10s"
 	api "github.com/ruudiRatlos/s10s/openapi"
 	"golang.org/x/sync/errgroup"
 )
@@ -33,6 +34,39 @@ func (s *State) AllAgents(ctx context.Context) (<-chan *api.Agent, int, error) {
 		}
 	}()
 	return out, len(cached), nil
+}
+
+func (s *State) AllAgentsStatic(ctx context.Context) (<-chan *api.Agent, int, error) {
+	cached, err := s.loadAgents(ctx)
+	if err != nil {
+		return nil, -1, err
+	}
+	out := make(chan *api.Agent)
+	go func() {
+		defer close(out)
+		for _, a := range cached {
+			select {
+			case out <- a:
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+	return out, len(cached), nil
+}
+
+func (s *State) GetPublicAgentStatic(ctx context.Context, agentSymbol string) (*api.Agent, error) {
+	cached, err := s.loadAgents(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for a := range cached {
+		if cached[a].Symbol != agentSymbol {
+			continue
+		}
+		return cached[a], nil
+	}
+	return nil, s10s.ErrAgentNotExists
 }
 
 func (s *State) fetchAndSaveAgents(ctx context.Context, agents <-chan *api.Agent, count int, cancel func()) (<-chan *api.Agent, int, error) {
