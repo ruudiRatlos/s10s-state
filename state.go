@@ -66,7 +66,7 @@ func NewState(l *slog.Logger, c *s10s.Client, dbPath string) *State {
 		d: diskv.New(diskv.Options{
 			BasePath:     dbPath,
 			Transform:    treeTransform,
-			CacheSizeMax: 2 * 1024 * 1024,
+			CacheSizeMax: 20 * 1024 * 1024,
 			//Compression:  diskv.NewGzipCompression(),
 		}),
 
