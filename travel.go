@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"context"
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/dominikbraun/graph"
@@ -183,6 +184,32 @@ func (s *State) CalcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 		}
 	}
 
+	for _, t := range all {
+		if t.Symbol == source.Symbol {
+			continue
+		}
+		dist := int(mechanics.Distance(source, t))
+		reserve := 0
+		if !canRefuel(target) || !canRefuel(source) {
+			sort.Slice(fuelstations, func(i, j int) bool {
+				return mechanics.Distance(source, fuelstations[i]) < mechanics.Distance(source, fuelstations[j])
+			})
+			reserve = int(mechanics.Distance(source, fuelstations[0]))
+		}
+
+		for _, fm := range allFlightModes {
+			fuelNeeded := mechanics.CalcTravelFuelCost(dist, fm)
+			if !canRefuel(t) || !canRefuel(source) {
+				fuelNeeded += mechanics.CalcTravelFuelCost(reserve, fm)
+			}
+			if fuelCapa > 0 && fuelNeeded > int(ship.Fuel.Current) {
+				continue
+			}
+			weight := calcWeight(source, t, fm)
+			_ = g.AddEdge(NewVert(source, fm), NewVert(t, fm), graph.EdgeWeight(weight))
+		}
+	}
+
 	path, err := graph.ShortestPath(g, start, end)
 	if err != nil {
 		return nil, err
@@ -350,6 +377,7 @@ func (s *State) CalcInterstellarJumpRoute(ctx context.Context, from, to s10s.Way
 		jgSym := s10s.WaypointSymbol(jg.Symbol)
 		wp := s.FindWaypointBySymbol(ctx, jgSym)
 		if wp == nil {
+			s.l.DebugContext(ctx, "waypoint not found in cache", "wp", jgSym)
 			wp, err = s.c.SystemsAPI.GetWaypoint(ctx, jgSym)
 			if err != nil {
 				return nil, err

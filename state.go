@@ -260,6 +260,10 @@ func (s *State) updateWaypoint(wp *api.Waypoint, noLock bool) {
 	}()
 }
 
+func (s *State) PersistCacheOnce(ctx context.Context) error {
+	return s.writeState(ctx)
+}
+
 func (s *State) updateUniverse(sys *api.System) error {
 	s.wpM.Lock()
 	defer s.wpM.Unlock()
