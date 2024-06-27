@@ -415,7 +415,7 @@ func (s *State) GetShipyardStatic(ctx context.Context, wpSymbol s10s.WaypointSym
 }
 
 func (s *State) AllShipyardsStatic(ctx context.Context, sys s10s.SystemSymbol) ([]*api.Shipyard, error) {
-	wps, err := s.AllWaypoints(ctx, sys)
+	wps, err := s.AllWaypointsStatic(ctx, sys)
 	if err != nil {
 		return nil, err
 	}
