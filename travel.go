@@ -191,10 +191,15 @@ func (s *State) CalcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 		dist := int(mechanics.Distance(source, t))
 		reserve := 0
 		if !canRefuel(target) || !canRefuel(source) {
-			sort.Slice(fuelstations, func(i, j int) bool {
-				return mechanics.Distance(source, fuelstations[i]) < mechanics.Distance(source, fuelstations[j])
-			})
-			reserve = int(mechanics.Distance(source, fuelstations[0]))
+			switch {
+			case len(fuelstations) > 0:
+				sort.Slice(fuelstations, func(i, j int) bool {
+					return mechanics.Distance(source, fuelstations[i]) < mechanics.Distance(source, fuelstations[j])
+				})
+				reserve = int(mechanics.Distance(source, fuelstations[0]))
+			case len(fuelstations) == 0:
+				reserve = 2 * dist
+			}
 		}
 
 		for _, fm := range allFlightModes {
