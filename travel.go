@@ -19,6 +19,7 @@ type RouteItem struct {
 	Duration time.Duration
 	FM       api.ShipNavFlightMode
 	Refuel   bool
+	Fuel     int
 }
 
 type Vert struct {
@@ -65,7 +66,7 @@ func (s *State) CalcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 		return v
 	}
 
-	g := graph.New(wpHash, graph.Weighted(), graph.Directed())
+	g := graph.New(wpHash, graph.Weighted())
 
 	start := NewVert(source, api.SHIPNAVFLIGHTMODE_CRUISE)
 	start.Start = true
@@ -112,10 +113,7 @@ func (s *State) CalcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 				if fm == ofm {
 					continue
 				}
-				err := g.AddEdge(sv, NewVert(s, ofm), graph.EdgeWeight(0))
-				if err != nil {
-					return nil, err
-				}
+				_ = g.AddEdge(sv, NewVert(s, ofm), graph.EdgeWeight(0))
 			}
 		}
 	}
@@ -236,6 +234,7 @@ func (s *State) CalcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 			FM:       fm,
 			Refuel:   path[i].Refuel,
 			Duration: mechanics.CalcTravelTimeRaw(ship.Engine.Speed, fm, dist),
+			Fuel:     mechanics.CalcTravelFuelCost(dist, fm),
 		})
 	}
 	//file, _ := os.Create("./simple.gv")
