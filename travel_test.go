@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"os"
 	"testing"
 	"time"
@@ -69,6 +70,71 @@ func TestCalcNavRouteFullNoCargo(t *testing.T) {
 				t.Errorf("got: %v, exp: %v", got, tc.time)
 			}
 		})
+	}
+}
+
+func TestCalcNavRouteEmptyNoCargo(t *testing.T) {
+	ctx := context.Background()
+	all := loadWPS(t, "test-data/wps-x1-py55.json")
+	command := "test-data/ship_command.json"
+
+	type ttt struct {
+		ship     string
+		from, to string
+		time     int
+	}
+
+	ttts := []ttt{
+		{command, "X1-PY55-B43", "X1-PY55-A2", 347},
+	}
+
+	for _, tc := range ttts {
+		ship := loadShip(t, tc.ship)
+		ship.Fuel.Current = 200
+		tName := fmt.Sprintf("%s:%s -> %s", ship.Registration.Role, tc.from, tc.to)
+		t.Run(tName, func(t *testing.T) {
+			from := findWP(t, all, tc.from)
+			to := findWP(t, all, tc.to)
+			res, err := calcNavRoute(ctx, ship, all, from, to)
+			if err != nil {
+				t.Errorf("got: %v, %v; exp: err==nil", res, err)
+			}
+			got := calcTime(res, ship)
+			if got != tc.time {
+				showRoute(ship, res)
+				t.Errorf("got: %v, exp: %v", got, tc.time)
+			}
+		})
+	}
+}
+
+func TestCalcNavRouteRandom(t *testing.T) {
+	ctx := context.Background()
+	all := loadWPS(t, "test-data/wps-x1-py55.json")
+	command := "test-data/ship_command.json"
+	ship := loadShip(t, command)
+
+	rand.Shuffle(len(all), func(i, j int) { all[i], all[j] = all[j], all[i] })
+	all2 := make([]*api.Waypoint, len(all))
+	copy(all2, all)
+	rand.Shuffle(len(all2), func(i, j int) { all2[i], all2[j] = all2[j], all2[i] })
+
+	for i, from := range all {
+		if i > 7 {
+			continue
+		}
+		for j, to := range all2 {
+			if j > 7 {
+				continue
+			}
+			t.Run(fmt.Sprintf("%d/%d: %s->%s", i, j, from.Symbol, to.Symbol), func(t *testing.T) {
+				t.Parallel()
+				res, err := calcNavRoute(ctx, ship, all, from, to)
+				if err != nil {
+					t.Errorf("got: %v, %v; exp: err==nil", res, err)
+				}
+			})
+		}
 	}
 }
 
