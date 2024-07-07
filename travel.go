@@ -48,7 +48,6 @@ func (s *State) CalcTravelDistance(ctx context.Context, ship *api.Ship, fromSymb
 }
 
 func (s *State) CalcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.WaypointSymbol) ([]RouteItem, error) {
-	fuelCapa := int(ship.Fuel.Capacity)
 	all, err := s.AllWaypoints(ctx, from.SystemSymbol())
 	if err != nil {
 		return nil, err
@@ -62,9 +61,29 @@ func (s *State) CalcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 		return nil, fmt.Errorf("destination %q not found, len(all)=%d", to, len(all))
 	}
 
+	return calcNavRoute(ctx, ship, all, source, target)
+}
+
+// calcNavRoute is the testable version of CalcNavRoute, it has no state and no external dependencies
+func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, source, target *api.Waypoint) ([]RouteItem, error) {
+	if source.Symbol == target.Symbol {
+		// why wasnt this caught earlier?
+		return []RouteItem{
+			RouteItem{
+				From:     source,
+				To:       target,
+				Dist:     0,
+				FM:       api.SHIPNAVFLIGHTMODE_CRUISE,
+				Refuel:   false,
+				Duration: 1 * time.Second,
+				Fuel:     0,
+			}}, nil
+	}
+
 	wpHash := func(v Vert) Vert {
 		return v
 	}
+	fuelCapa := int(ship.Fuel.Capacity)
 
 	g := graph.New(wpHash, graph.Weighted())
 
@@ -72,7 +91,7 @@ func (s *State) CalcNavRoute(ctx context.Context, ship *api.Ship, from, to s10s.
 	start.Start = true
 	end := NewVert(target, api.SHIPNAVFLIGHTMODE_CRUISE)
 	end.Start = true
-	err = g.AddVertex(start)
+	err := g.AddVertex(start)
 	if err != nil {
 		return nil, err
 	}
