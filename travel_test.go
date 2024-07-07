@@ -43,14 +43,14 @@ func TestCalcNavRouteFullNoCargo(t *testing.T) {
 		{command, "X1-PY55-A2", "X1-PY55-B41", 265},
 		{command, "X1-PY55-A2", "X1-PY55-G55", 50},
 		{command, "X1-PY55-A2", "X1-PY55-I60", 287},
-		{command, "X1-PY55-J63", "X1-PY55-B7", 515},
+		{command, "X1-PY55-J63", "X1-PY55-B7", 500},
 		{miner, "X1-PY55-H57", "X1-PY55-XA5E", 106},
 		{miner, "X1-PY55-H57", "X1-PY55-C45", 1149},
 		{miner, "X1-PY55-H57", "X1-PY55-B40", 20933},
 
 		{command, "X1-PY55-B9", "X1-PY55-B43", 29},
 		{command, "X1-PY55-B12", "X1-PY55-B36", 567},
-		{command, "X1-PY55-B7", "X1-PY55-J84", 3041},
+		{command, "X1-PY55-B7", "X1-PY55-J84", 3025},
 	}
 
 	for _, tc := range ttts {
@@ -119,11 +119,12 @@ func TestCalcNavRouteRandom(t *testing.T) {
 	copy(all2, all)
 	rand.Shuffle(len(all2), func(i, j int) { all2[i], all2[j] = all2[j], all2[i] })
 
+	c := 0
 	for i, from := range all {
-		if i > 7 {
-			continue
-		}
 		for j, to := range all2 {
+			if from.Symbol == to.Symbol {
+				continue
+			}
 			if j > 7 {
 				continue
 			}
@@ -134,6 +135,10 @@ func TestCalcNavRouteRandom(t *testing.T) {
 					t.Errorf("got: %v, %v; exp: err==nil", res, err)
 				}
 			})
+			c++
+			if c > 70 {
+				return
+			}
 		}
 	}
 }

@@ -114,7 +114,10 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 				if fm == ofm {
 					continue
 				}
-				_ = g.AddEdge(sv, NewVert(s, ofm), graph.EdgeWeight(0))
+				err := g.AddEdge(sv, NewVert(s, ofm), graph.EdgeWeight(0))
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 	}
@@ -132,18 +135,6 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 			dist := int(mechanics.Distance(s, t))
 			for _, fm := range allFlightModes {
 				fuelNeeded := mechanics.CalcTravelFuelCost(dist, fm)
-				if !canRefuelFromCargo && !canRefuel(s) && s != source && t != target {
-					continue
-				}
-				if t == target && !canRefuel(t) {
-					nearestFS := findNearestFS(all, t)
-					reserveFuel := int(mechanics.Distance(nearestFS, t))
-					if reserveFuel > fuelCapa {
-						reserveFuel = 0 // drift it is
-					}
-					//	fmt.Printf("reserveFuel for %s (%s): %v [%v]\n", target.Symbol, nearestFS.Symbol, reserveFuel, fuelCapa)
-					fuelNeeded += reserveFuel
-				}
 				if fuelCapa > 0 && fuelNeeded > fuelCapa {
 					continue
 				}
