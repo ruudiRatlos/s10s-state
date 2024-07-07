@@ -26,7 +26,7 @@ func TestCalcNavRouteTargetSourceEqual(t *testing.T) {
 	}
 }
 
-func TestCalcNavRouteCommand(t *testing.T) {
+func TestCalcNavRouteFullNoCargo(t *testing.T) {
 	ctx := context.Background()
 	all := loadWPS(t, "test-data/wps-x1-py55.json")
 	command := "test-data/ship_command.json"
@@ -41,20 +41,23 @@ func TestCalcNavRouteCommand(t *testing.T) {
 	ttts := []ttt{
 		{command, "X1-PY55-A2", "X1-PY55-B41", 265},
 		{command, "X1-PY55-A2", "X1-PY55-G55", 50},
-		{command, "X1-PY55-A2", "X1-PY55-I60", 250},
-		{command, "X1-PY55-J63", "X1-PY55-B7", 407},
+		{command, "X1-PY55-A2", "X1-PY55-I60", 287},
+		{command, "X1-PY55-J63", "X1-PY55-B7", 515},
 		{miner, "X1-PY55-H57", "X1-PY55-XA5E", 106},
 		{miner, "X1-PY55-H57", "X1-PY55-C45", 1149},
 		{miner, "X1-PY55-H57", "X1-PY55-B40", 20933},
 
-		{command, "X1-PY55-B9", "X1-PY55-B43", 44},
+		{command, "X1-PY55-B9", "X1-PY55-B43", 29},
 		{command, "X1-PY55-B12", "X1-PY55-B36", 567},
-		{command, "X1-PY55-B7", "X1-PY55-J84", 4431},
+		{command, "X1-PY55-B7", "X1-PY55-J84", 3041},
 	}
 
 	for _, tc := range ttts {
 		ship := loadShip(t, tc.ship)
-		t.Run(fmt.Sprintf("%s:%s -> %s", ship.Registration.Role, tc.from, tc.to), func(t *testing.T) {
+		ship.Cargo.Units = ship.Cargo.Capacity
+		ship.Fuel.Current = ship.Fuel.Capacity
+		tName := fmt.Sprintf("%s:%s -> %s", ship.Registration.Role, tc.from, tc.to)
+		t.Run(tName, func(t *testing.T) {
 			from := findWP(t, all, tc.from)
 			to := findWP(t, all, tc.to)
 			res, err := calcNavRoute(ctx, ship, all, from, to)
@@ -63,15 +66,40 @@ func TestCalcNavRouteCommand(t *testing.T) {
 			}
 			got := calcTime(res, ship)
 			if got != tc.time {
-				showRoute(res)
+				showRoute(ship, res)
 				t.Errorf("got: %v, exp: %v", got, tc.time)
 			}
 		})
 	}
 }
 
-func showRoute(route []RouteItem) {
-	tbl := table.New("from", "to", "mode", "dist", "duration", "refuel", "fuel")
+func TestFindNearestFS(t *testing.T) {
+	all := loadWPS(t, "test-data/wps-x1-py55.json")
+	type ttt struct {
+		from string
+		fs   string
+	}
+
+	ttts := []ttt{
+		{"X1-PY55-B42", "X1-PY55-B7"},
+		{"X1-PY55-XA5E", "X1-PY55-XA5E"},
+		{"X1-PY55-B35", "X1-PY55-I60"},
+	}
+
+	for _, tc := range ttts {
+		t.Run(tc.from, func(t *testing.T) {
+			from := findWP(t, all, tc.from)
+
+			fs := findNearestFS(all, from)
+			if fs.Symbol != tc.fs {
+				t.Errorf("got %s, exp %s", fs.Symbol, tc.fs)
+			}
+		})
+	}
+}
+
+func showRoute(ship *api.Ship, route []RouteItem) {
+	tbl := table.New("from", "to", "mode", "dist", "duration", "refuel", "fuel needed", "fuel left")
 	headerFmt := color.New(color.FgGreen, color.Underline).SprintfFunc()
 	tbl.WithHeaderFormatter(headerFmt)
 	tDist := 0
@@ -80,7 +108,26 @@ func showRoute(route []RouteItem) {
 		tDist += leg.Dist
 		tDur = tDur + leg.Duration
 
-		tbl.AddRow(leg.From.Symbol, leg.To.Symbol, leg.FM, leg.Dist, leg.Duration, leg.Refuel, leg.Fuel)
+		from := leg.From.Symbol
+		if canRefuel(leg.From) {
+			from += "*"
+		}
+
+		to := leg.To.Symbol
+		if canRefuel(leg.To) {
+			to += "*"
+		}
+
+		tbl.AddRow(
+			from,
+			to,
+			leg.FM,
+			leg.Dist,
+			leg.Duration,
+			leg.Refuel,
+			leg.Fuel,
+			leg.Left,
+		)
 	}
 	tbl.AddRow("", "", "", tDist, tDur)
 	tbl.Print()

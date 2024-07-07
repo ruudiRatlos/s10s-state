@@ -4,7 +4,7 @@ import (
 	"cmp"
 	"context"
 	"fmt"
-	"sort"
+	"slices"
 	"time"
 
 	"github.com/dominikbraun/graph"
@@ -20,6 +20,7 @@ type RouteItem struct {
 	FM       api.ShipNavFlightMode
 	Refuel   bool
 	Fuel     int
+	Left     int32
 }
 
 type Vert struct {
@@ -77,6 +78,7 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 				Refuel:   false,
 				Duration: 1 * time.Second,
 				Fuel:     0,
+				Left:     ship.Fuel.Current,
 			}}, nil
 	}
 
@@ -85,20 +87,7 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 	}
 	fuelCapa := int(ship.Fuel.Capacity)
 
-	g := graph.New(wpHash, graph.Weighted())
-
-	start := NewVert(source, api.SHIPNAVFLIGHTMODE_CRUISE)
-	start.Start = true
-	end := NewVert(target, api.SHIPNAVFLIGHTMODE_CRUISE)
-	end.Start = true
-	err := g.AddVertex(start)
-	if err != nil {
-		return nil, err
-	}
-	err = g.AddVertex(end)
-	if err != nil {
-		return nil, err
-	}
+	g := graph.New(wpHash, graph.Directed(), graph.Weighted())
 
 	allFlightModes := []api.ShipNavFlightMode{
 		api.SHIPNAVFLIGHTMODE_DRIFT,
@@ -106,26 +95,17 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 		api.SHIPNAVFLIGHTMODE_BURN,
 	}
 
+	// create all vertices
 	for _, s := range all {
 		for _, fm := range allFlightModes {
 			sv := NewVert(s, fm)
-			err = g.AddVertex(sv)
+			err := g.AddVertex(sv)
 			if err != nil {
 				return nil, err
 			}
-			if s.Symbol == start.WP.Symbol {
-				err := g.AddEdge(start, sv, graph.EdgeWeight(0))
-				if err != nil {
-					return nil, err
-				}
-			}
-			if s.Symbol == end.WP.Symbol {
-				err := g.AddEdge(sv, end, graph.EdgeWeight(0))
-				if err != nil {
-					return nil, err
-				}
-			}
 		}
+
+		// connect all flightmode vertices at this waypoint
 		for _, fm := range allFlightModes {
 			sv := NewVert(s, fm)
 			for _, ofm := range allFlightModes {
@@ -140,33 +120,9 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 	calcWeight := func(from, to *api.Waypoint, fm api.ShipNavFlightMode) int {
 		dist := int(mechanics.Distance(from, to))
 		return int(mechanics.CalcTravelTimeRaw(ship.Engine.Speed, fm, dist).Seconds())
-		//return dist
 	}
 
-	fuelstations := mechanics.FilterWaypoints(all, api.WAYPOINTTRAITSYMBOL_MARKETPLACE)
-
-	minFuelLastLeg := 0
-	if !canRefuel(target) {
-		for _, t := range fuelstations {
-			dist := int(mechanics.Distance(target, t))
-			if minFuelLastLeg == 0 || dist < minFuelLastLeg {
-				minFuelLastLeg = dist
-			}
-		}
-		switch {
-		case minFuelLastLeg > int(ship.Fuel.Capacity):
-			// target is too remote to not drift towards it
-			minFuelLastLeg = 0
-		default:
-			/*
-				 s.l.DebugContext(ctx, "can't refuel at destination",
-					"minFuelLastLeg", minFuelLastLeg,
-					"capa", ship.Fuel.Capacity)
-			*/
-		}
-	}
-
-	for _, s := range fuelstations {
+	for _, s := range all {
 		for _, t := range all {
 			if s.Symbol == t.Symbol {
 				continue
@@ -174,69 +130,64 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 			dist := int(mechanics.Distance(s, t))
 			for _, fm := range allFlightModes {
 				fuelNeeded := mechanics.CalcTravelFuelCost(dist, fm)
+				if !cargoAvailable(ship) && !canRefuel(s) && s != source && t != target {
+					continue
+				}
+				if t == target && !canRefuel(t) {
+					nearestFS := findNearestFS(all, t)
+					reserveFuel := int(mechanics.Distance(nearestFS, t))
+					if reserveFuel > int(ship.Fuel.Capacity) {
+						reserveFuel = 0 // drift it is
+					}
+					//	fmt.Printf("reserveFuel for %s (%s): %v [%v]\n", target.Symbol, nearestFS.Symbol, reserveFuel, ship.Fuel.Capacity)
+					fuelNeeded += reserveFuel
+				}
 				if fuelCapa > 0 && fuelNeeded > fuelCapa {
 					continue
 				}
-				if t.Symbol == target.Symbol && minFuelLastLeg > 0 && fuelNeeded+minFuelLastLeg > fuelCapa {
-					continue
-				}
 				weight := calcWeight(s, t, fm)
-				_ = g.AddEdge(NewVert(s, fm), NewVert(t, fm), graph.EdgeWeight(weight))
-			}
-		}
-	}
-
-	// falls source keine Tankstelle ist, müssen wir noch die Wege von source zu den fuelstations berechnen
-	if !canRefuel(source) {
-		for _, t := range fuelstations {
-			dist := int(mechanics.Distance(source, t))
-			for _, fm := range allFlightModes {
-				fuelNeeded := mechanics.CalcTravelFuelCost(dist, fm)
-				if fuelCapa > 0 && fuelNeeded > int(ship.Fuel.Current) {
-					continue
+				err := g.AddEdge(NewVert(s, fm), NewVert(t, fm), graph.EdgeWeight(weight))
+				if err != nil {
+					return nil, err
 				}
-				weight := calcWeight(source, t, fm)
-				_ = g.AddEdge(NewVert(source, fm), NewVert(t, fm), graph.EdgeWeight(weight))
 			}
 		}
 	}
 
-	for _, t := range all {
-		if t.Symbol == source.Symbol {
-			continue
-		}
-		dist := int(mechanics.Distance(source, t))
-		reserve := 0
-		if !canRefuel(target) || !canRefuel(source) {
-			switch {
-			case len(fuelstations) > 0:
-				sort.Slice(fuelstations, func(i, j int) bool {
-					return mechanics.Distance(source, fuelstations[i]) < mechanics.Distance(source, fuelstations[j])
-				})
-				reserve = int(mechanics.Distance(source, fuelstations[0]))
-			case len(fuelstations) == 0:
-				reserve = 2 * dist
-			}
+	start := NewVert(source, api.SHIPNAVFLIGHTMODE_CRUISE)
+	start.Start = true
+	end := NewVert(target, api.SHIPNAVFLIGHTMODE_CRUISE)
+	end.Start = true
+	err := g.AddVertex(start)
+	if err != nil {
+		return nil, err
+	}
+	err = g.AddVertex(end)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, fm := range allFlightModes {
+		sv := NewVert(source, fm)
+		err = g.AddEdge(start, sv, graph.EdgeWeight(0))
+		if err != nil {
+			return nil, err
 		}
 
-		for _, fm := range allFlightModes {
-			fuelNeeded := mechanics.CalcTravelFuelCost(dist, fm)
-			if !canRefuel(t) || !canRefuel(source) {
-				fuelNeeded += mechanics.CalcTravelFuelCost(reserve, fm)
-			}
-			if fuelCapa > 0 && fuelNeeded > int(ship.Fuel.Current) {
-				continue
-			}
-			weight := calcWeight(source, t, fm)
-			_ = g.AddEdge(NewVert(source, fm), NewVert(t, fm), graph.EdgeWeight(weight))
+		ev := NewVert(target, fm)
+		err = g.AddEdge(ev, end, graph.EdgeWeight(0))
+		if err != nil {
+			return nil, err
 		}
 	}
 
+redo:
 	path, err := graph.ShortestPath(g, start, end)
 	if err != nil {
 		return nil, err
 	}
 
+	left := ship.Fuel.Current
 	out := make([]RouteItem, 0, len(path)-3)
 	for i := 1; i < len(path)-2; i++ {
 		from := path[i].WP
@@ -246,6 +197,33 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 		}
 		dist := int(mechanics.Distance(from, to))
 		fm := path[i].FM
+		if path[i].Refuel {
+			left = ship.Fuel.Capacity
+		}
+		consumed := mechanics.CalcTravelFuelCost(dist, fm)
+		left -= int32(consumed)
+
+		if left < 0 && !cargoAvailable(ship) {
+			//fmt.Printf("fuel dipped below 0 from %s to %s\n", path[i].WP.Symbol, path[i+1].WP.Symbol)
+			err := g.RemoveEdge(NewVert(from, path[i].FM), NewVert(to, path[i+1].FM))
+			if err != nil {
+				return nil, err
+			}
+			goto redo
+		}
+
+		if to == target && !canRefuel(target) {
+			nearestFS := findNearestFS(all, target)
+			reserveFuel := int32(mechanics.Distance(nearestFS, target))
+			if left < reserveFuel && reserveFuel < ship.Fuel.Capacity {
+				err := g.RemoveEdge(NewVert(from, path[i].FM), NewVert(to, path[i+1].FM))
+				if err != nil {
+					return nil, err
+				}
+				goto redo
+			}
+		}
+
 		out = append(out, RouteItem{
 			From:     from,
 			To:       to,
@@ -253,13 +231,28 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 			FM:       fm,
 			Refuel:   path[i].Refuel,
 			Duration: mechanics.CalcTravelTimeRaw(ship.Engine.Speed, fm, dist),
-			Fuel:     mechanics.CalcTravelFuelCost(dist, fm),
+			Fuel:     consumed,
+			Left:     left,
 		})
 	}
-	//file, _ := os.Create("./simple.gv")
+
+	//file, _ := os.Create(fmt.Sprintf("./simple-%s-%s-%s.dot", ship.Symbol, source.Symbol, target.Symbol))
 	//_ = draw.DOT(g, file)
 
 	return out, nil
+}
+
+func findNearestFS(all []*api.Waypoint, target *api.Waypoint) *api.Waypoint {
+	fuelstations := mechanics.FilterWaypoints(all, api.WAYPOINTTRAITSYMBOL_MARKETPLACE)
+	return slices.MinFunc(fuelstations, func(a, b *api.Waypoint) int {
+		distA := mechanics.Distance(target, a)
+		distB := mechanics.Distance(target, b)
+		return cmp.Compare(distA, distB)
+	})
+}
+
+func cargoAvailable(ship *api.Ship) bool {
+	return ship.Cargo.Units < ship.Cargo.Capacity
 }
 
 func canRefuel(wp *api.Waypoint) bool {
