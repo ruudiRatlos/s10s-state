@@ -1,0 +1,138 @@
+{
+  "cargo": {
+    "capacity": 15,
+    "inventory": [
+      {
+        "description": "A valuable ore used in the production of copper and other alloys. Copper ore is an essential component in the production of electronic components and wiring.",
+        "name": "Copper Ore",
+        "symbol": "COPPER_ORE",
+        "units": 3
+      }
+    ],
+    "units": 3
+  },
+  "cooldown": {
+    "expiration": "2024-07-07T14:17:27.976Z",
+    "remainingSeconds": 70,
+    "shipSymbol": "RUUDI-RATLOS-7",
+    "totalSeconds": 75
+  },
+  "crew": {
+    "capacity": 0,
+    "current": 0,
+    "morale": 100,
+    "required": 0,
+    "rotation": "STRICT",
+    "wages": 0
+  },
+  "engine": {
+    "condition": 1,
+    "description": "A basic low-energy propulsion system that generates thrust for interplanetary travel.",
+    "integrity": 1,
+    "name": "Impulse Drive I",
+    "requirements": {
+      "crew": 0,
+      "power": 1
+    },
+    "speed": 3,
+    "symbol": "ENGINE_IMPULSE_DRIVE_I"
+  },
+  "frame": {
+    "condition": 0,
+    "description": "A small, unmanned spacecraft used for various tasks, such as surveillance, transportation, or combat.",
+    "fuelCapacity": 80,
+    "integrity": 1,
+    "moduleSlots": 3,
+    "mountingPoints": 2,
+    "name": "Drone",
+    "requirements": {
+      "crew": -4,
+      "power": 1
+    },
+    "symbol": "FRAME_DRONE"
+  },
+  "fuel": {
+    "capacity": 80,
+    "consumed": {
+      "amount": 44,
+      "timestamp": "2024-07-01T04:55:55.145Z"
+    },
+    "current": 80
+  },
+  "modules": [
+    {
+      "capacity": 15,
+      "description": "A module that increases a ship's cargo capacity.",
+      "name": "Cargo Hold",
+      "requirements": {
+        "crew": 0,
+        "power": 1,
+        "slots": 1
+      },
+      "symbol": "MODULE_CARGO_HOLD_I"
+    },
+    {
+      "description": "Crushes and processes extracted minerals and ores into their component parts, filters out impurities, and containerizes them into raw storage units.",
+      "name": "Mineral Processor",
+      "requirements": {
+        "crew": 0,
+        "power": 1,
+        "slots": 2
+      },
+      "symbol": "MODULE_MINERAL_PROCESSOR_I"
+    }
+  ],
+  "mounts": [
+    {
+      "description": "A basic mining laser that can be used to extract valuable minerals from asteroids and other space objects.",
+      "name": "Mining Laser I",
+      "requirements": {
+        "crew": 1,
+        "power": 1
+      },
+      "strength": 3,
+      "symbol": "MOUNT_MINING_LASER_I"
+    }
+  ],
+  "nav": {
+    "flightMode": "BURN",
+    "route": {
+      "arrival": "2024-07-01T04:57:42.129Z",
+      "departureTime": "2024-07-01T04:55:55.129Z",
+      "destination": {
+        "symbol": "X1-PY55-XA5E",
+        "systemSymbol": "X1-PY55",
+        "type": "ENGINEERED_ASTEROID",
+        "x": -20,
+        "y": -14
+      },
+      "origin": {
+        "symbol": "X1-PY55-H57",
+        "systemSymbol": "X1-PY55",
+        "type": "MOON",
+        "x": -33,
+        "y": -32
+      }
+    },
+    "status": "IN_ORBIT",
+    "systemSymbol": "X1-PY55",
+    "waypointSymbol": "X1-PY55-XA5E"
+  },
+  "reactor": {
+    "condition": 0.0448062506174244,
+    "description": "A basic chemical power reactor, used to generate electricity from chemical reactions.",
+    "integrity": 1,
+    "name": "Chemical Reactor I",
+    "powerOutput": 15,
+    "requirements": {
+      "crew": 3
+    },
+    "symbol": "REACTOR_CHEMICAL_I"
+  },
+  "registration": {
+    "factionSymbol": "COSMIC",
+    "name": "RUUDI-RATLOS-7",
+    "role": "EXCAVATOR"
+  },
+  "symbol": "RUUDI-RATLOS-7"
+}

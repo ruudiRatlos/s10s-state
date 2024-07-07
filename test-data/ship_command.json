@@ -1,0 +1,214 @@
+{
+  "cargo": {
+    "capacity": 40,
+    "inventory": [
+      {
+        "description": "A raw, unprocessed form of silver, often found in mines and underground deposits on planets and moons.",
+        "name": "Silver Ore",
+        "symbol": "SILVER_ORE",
+        "units": 23
+      }
+    ],
+    "units": 23
+  },
+  "cooldown": {
+    "remainingSeconds": 0,
+    "shipSymbol": "RUUDI-RATLOS-1",
+    "totalSeconds": 0
+  },
+  "crew": {
+    "capacity": 80,
+    "current": 57,
+    "morale": 100,
+    "required": 57,
+    "rotation": "STRICT",
+    "wages": 0
+  },
+  "engine": {
+    "condition": 0.9891951903342721,
+    "description": "An advanced propulsion system that uses ionized particles to generate high-speed, low-thrust acceleration, with improved efficiency and performance.",
+    "integrity": 0.99,
+    "name": "Ion Drive II",
+    "requirements": {
+      "crew": 8,
+      "power": 6
+    },
+    "speed": 30,
+    "symbol": "ENGINE_ION_DRIVE_II"
+  },
+  "frame": {
+    "condition": 0.9675619766334925,
+    "description": "A medium-sized, multi-purpose spacecraft, often used for combat, transport, or support operations.",
+    "fuelCapacity": 400,
+    "integrity": 0.99,
+    "moduleSlots": 8,
+    "mountingPoints": 5,
+    "name": "Frigate",
+    "requirements": {
+      "crew": 25,
+      "power": 8
+    },
+    "symbol": "FRAME_FRIGATE"
+  },
+  "fuel": {
+    "capacity": 400,
+    "consumed": {
+      "amount": 1,
+      "timestamp": "2024-07-05T23:11:07.726Z"
+    },
+    "current": 400
+  },
+  "modules": [
+    {
+      "capacity": 40,
+      "description": "An expanded cargo hold module that provides more efficient storage space for a ship's cargo.",
+      "name": "Expanded Cargo Hold",
+      "requirements": {
+        "crew": 2,
+        "power": 2,
+        "slots": 2
+      },
+      "symbol": "MODULE_CARGO_HOLD_II"
+    },
+    {
+      "capacity": 40,
+      "description": "A module that provides living space and amenities for the crew.",
+      "name": "Crew Quarters",
+      "requirements": {
+        "crew": 2,
+        "power": 1,
+        "slots": 1
+      },
+      "symbol": "MODULE_CREW_QUARTERS_I"
+    },
+    {
+      "capacity": 40,
+      "description": "A module that provides living space and amenities for the crew.",
+      "name": "Crew Quarters",
+      "requirements": {
+        "crew": 2,
+        "power": 1,
+        "slots": 1
+      },
+      "symbol": "MODULE_CREW_QUARTERS_I"
+    },
+    {
+      "description": "Crushes and processes extracted minerals and ores into their component parts, filters out impurities, and containerizes them into raw storage units.",
+      "name": "Mineral Processor",
+      "requirements": {
+        "crew": 0,
+        "power": 1,
+        "slots": 2
+      },
+      "symbol": "MODULE_MINERAL_PROCESSOR_I"
+    },
+    {
+      "description": "Filters and processes extracted gases into their component parts, filters out impurities, and containerizes them into raw storage units.",
+      "name": "Gas Processor",
+      "requirements": {
+        "crew": 0,
+        "power": 1,
+        "slots": 2
+      },
+      "symbol": "MODULE_GAS_PROCESSOR_I"
+    }
+  ],
+  "mounts": [
+    {
+      "description": "An advanced sensor array that improves a ship's ability to detect and track other objects in space with greater accuracy and range.",
+      "name": "Sensor Array II",
+      "requirements": {
+        "crew": 2,
+        "power": 2
+      },
+      "strength": 4,
+      "symbol": "MOUNT_SENSOR_ARRAY_II"
+    },
+    {
+      "description": "An advanced gas siphon that can extract gas from gas giants and other gas-rich bodies more efficiently and at a higher rate.",
+      "name": "Gas Siphon II",
+      "requirements": {
+        "crew": 2,
+        "power": 2
+      },
+      "strength": 20,
+      "symbol": "MOUNT_GAS_SIPHON_II"
+    },
+    {
+      "description": "An advanced mining laser that is more efficient and effective at extracting valuable minerals from asteroids and other space objects.",
+      "name": "Mining Laser II",
+      "requirements": {
+        "crew": 2,
+        "power": 2
+      },
+      "strength": 5,
+      "symbol": "MOUNT_MINING_LASER_II"
+    },
+    {
+      "deposits": [
+        "QUARTZ_SAND",
+        "SILICON_CRYSTALS",
+        "PRECIOUS_STONES",
+        "ICE_WATER",
+        "AMMONIA_ICE",
+        "IRON_ORE",
+        "COPPER_ORE",
+        "SILVER_ORE",
+        "ALUMINUM_ORE",
+        "GOLD_ORE",
+        "PLATINUM_ORE",
+        "DIAMONDS",
+        "URANITE_ORE"
+      ],
+      "description": "An advanced survey probe that can be used to gather information about a mineral deposit with greater accuracy.",
+      "name": "Surveyor II",
+      "requirements": {
+        "crew": 4,
+        "power": 3
+      },
+      "strength": 2,
+      "symbol": "MOUNT_SURVEYOR_II"
+    }
+  ],
+  "nav": {
+    "flightMode": "DRIFT",
+    "route": {
+      "arrival": "2024-07-05T23:58:00.71Z",
+      "departureTime": "2024-07-05T23:11:07.71Z",
+      "destination": {
+        "symbol": "X1-PY55-B7",
+        "systemSymbol": "X1-PY55",
+        "type": "ASTEROID_BASE",
+        "x": -47,
+        "y": 342
+      },
+      "origin": {
+        "symbol": "X1-PY55-B44",
+        "systemSymbol": "X1-PY55",
+        "type": "ASTEROID",
+        "x": -311,
+        "y": 162
+      }
+    },
+    "status": "DOCKED",
+    "systemSymbol": "X1-PY55",
+    "waypointSymbol": "X1-PY55-B7"
+  },
+  "reactor": {
+    "condition": 0.9869898810516599,
+    "description": "A basic fission power reactor, used to generate electricity from nuclear fission reactions.",
+    "integrity": 0.99,
+    "name": "Fission Reactor I",
+    "powerOutput": 31,
+    "requirements": {
+      "crew": 8
+    },
+    "symbol": "REACTOR_FISSION_I"
+  },
+  "registration": {
+    "factionSymbol": "COSMIC",
+    "name": "RUUDI-RATLOS-1",
+    "role": "COMMAND"
+  },
+  "symbol": "RUUDI-RATLOS-1"
+}

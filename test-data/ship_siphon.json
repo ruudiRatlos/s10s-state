@@ -1,0 +1,143 @@
+{
+  "cargo": {
+    "capacity": 15,
+    "inventory": [
+      {
+        "description": "A highly efficient and lightweight fuel used in advanced propulsion systems.",
+        "name": "Liquid Hydrogen",
+        "symbol": "LIQUID_HYDROGEN",
+        "units": 8
+      },
+      {
+        "description": "A highly-valued substance used in the production of fuels, plastics, and other industrial products.",
+        "name": "Hydrocarbons",
+        "symbol": "HYDROCARBON",
+        "units": 7
+      }
+    ],
+    "units": 15
+  },
+  "cooldown": {
+    "remainingSeconds": 0,
+    "shipSymbol": "RUUDI-RATLOS-3",
+    "totalSeconds": 0
+  },
+  "crew": {
+    "capacity": 0,
+    "current": -1,
+    "morale": 100,
+    "required": -1,
+    "rotation": "STRICT",
+    "wages": 0
+  },
+  "engine": {
+    "condition": 0,
+    "description": "A basic low-energy propulsion system that generates thrust for interplanetary travel.",
+    "integrity": 1,
+    "name": "Impulse Drive I",
+    "requirements": {
+      "crew": 0,
+      "power": 1
+    },
+    "speed": 3,
+    "symbol": "ENGINE_IMPULSE_DRIVE_I"
+  },
+  "frame": {
+    "condition": 0,
+    "description": "A small, unmanned spacecraft used for various tasks, such as surveillance, transportation, or combat.",
+    "fuelCapacity": 80,
+    "integrity": 1,
+    "moduleSlots": 3,
+    "mountingPoints": 2,
+    "name": "Drone",
+    "requirements": {
+      "crew": -4,
+      "power": 1
+    },
+    "symbol": "FRAME_DRONE"
+  },
+  "fuel": {
+    "capacity": 80,
+    "consumed": {
+      "amount": 2,
+      "timestamp": "2024-07-07T14:14:12.5Z"
+    },
+    "current": 80
+  },
+  "modules": [
+    {
+      "capacity": 15,
+      "description": "A module that increases a ship's cargo capacity.",
+      "name": "Cargo Hold",
+      "requirements": {
+        "crew": 0,
+        "power": 1,
+        "slots": 1
+      },
+      "symbol": "MODULE_CARGO_HOLD_I"
+    },
+    {
+      "description": "Filters and processes extracted gases into their component parts, filters out impurities, and containerizes them into raw storage units.",
+      "name": "Gas Processor",
+      "requirements": {
+        "crew": 0,
+        "power": 1,
+        "slots": 2
+      },
+      "symbol": "MODULE_GAS_PROCESSOR_I"
+    }
+  ],
+  "mounts": [
+    {
+      "description": "A basic gas siphon that can extract gas from gas giants and other gas-rich bodies.",
+      "name": "Gas Siphon I",
+      "requirements": {
+        "crew": 0,
+        "power": 1
+      },
+      "strength": 10,
+      "symbol": "MOUNT_GAS_SIPHON_I"
+    }
+  ],
+  "nav": {
+    "flightMode": "BURN",
+    "route": {
+      "arrival": "2024-07-07T14:14:33.478Z",
+      "departureTime": "2024-07-07T14:14:12.478Z",
+      "destination": {
+        "symbol": "X1-PY55-C46",
+        "systemSymbol": "X1-PY55",
+        "type": "ORBITAL_STATION",
+        "x": 70,
+        "y": -136
+      },
+      "origin": {
+        "symbol": "X1-PY55-C45",
+        "systemSymbol": "X1-PY55",
+        "type": "GAS_GIANT",
+        "x": 70,
+        "y": -136
+      }
+    },
+    "status": "DOCKED",
+    "systemSymbol": "X1-PY55",
+    "waypointSymbol": "X1-PY55-C46"
+  },
+  "reactor": {
+    "condition": 1,
+    "description": "A basic chemical power reactor, used to generate electricity from chemical reactions.",
+    "integrity": 1,
+    "name": "Chemical Reactor I",
+    "powerOutput": 15,
+    "requirements": {
+      "crew": 3
+    },
+    "symbol": "REACTOR_CHEMICAL_I"
+  },
+  "registration": {
+    "factionSymbol": "COSMIC",
+    "name": "RUUDI-RATLOS-3",
+    "role": "EXCAVATOR"
+  },
+  "symbol": "RUUDI-RATLOS-3"
+}
