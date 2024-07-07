@@ -54,7 +54,6 @@ func TestCalcNavRouteFullNoCargo(t *testing.T) {
 
 	for _, tc := range ttts {
 		ship := loadShip(t, tc.ship)
-		ship.Cargo.Units = ship.Cargo.Capacity
 		ship.Fuel.Current = ship.Fuel.Capacity
 		tName := fmt.Sprintf("%s:%s -> %s", ship.Registration.Role, tc.from, tc.to)
 		t.Run(tName, func(t *testing.T) {

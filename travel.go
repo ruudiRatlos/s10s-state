@@ -20,7 +20,7 @@ type RouteItem struct {
 	FM       api.ShipNavFlightMode
 	Refuel   bool
 	Fuel     int
-	Left     int32
+	Left     int
 }
 
 type Vert struct {
@@ -78,7 +78,7 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 				Refuel:   false,
 				Duration: 1 * time.Second,
 				Fuel:     0,
-				Left:     ship.Fuel.Current,
+				Left:     int(ship.Fuel.Current),
 			}}, nil
 	}
 
@@ -86,6 +86,8 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 		return v
 	}
 	fuelCapa := int(ship.Fuel.Capacity)
+	fuelCurrent := int(ship.Fuel.Current)
+	canRefuelFromCargo := false
 
 	g := graph.New(wpHash, graph.Directed(), graph.Weighted())
 
@@ -130,16 +132,16 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 			dist := int(mechanics.Distance(s, t))
 			for _, fm := range allFlightModes {
 				fuelNeeded := mechanics.CalcTravelFuelCost(dist, fm)
-				if !cargoAvailable(ship) && !canRefuel(s) && s != source && t != target {
+				if !canRefuelFromCargo && !canRefuel(s) && s != source && t != target {
 					continue
 				}
 				if t == target && !canRefuel(t) {
 					nearestFS := findNearestFS(all, t)
 					reserveFuel := int(mechanics.Distance(nearestFS, t))
-					if reserveFuel > int(ship.Fuel.Capacity) {
+					if reserveFuel > fuelCapa {
 						reserveFuel = 0 // drift it is
 					}
-					//	fmt.Printf("reserveFuel for %s (%s): %v [%v]\n", target.Symbol, nearestFS.Symbol, reserveFuel, ship.Fuel.Capacity)
+					//	fmt.Printf("reserveFuel for %s (%s): %v [%v]\n", target.Symbol, nearestFS.Symbol, reserveFuel, fuelCapa)
 					fuelNeeded += reserveFuel
 				}
 				if fuelCapa > 0 && fuelNeeded > fuelCapa {
@@ -187,7 +189,7 @@ redo:
 		return nil, err
 	}
 
-	left := ship.Fuel.Current
+	left := fuelCurrent
 	out := make([]RouteItem, 0, len(path)-3)
 	for i := 1; i < len(path)-2; i++ {
 		from := path[i].WP
@@ -198,12 +200,12 @@ redo:
 		dist := int(mechanics.Distance(from, to))
 		fm := path[i].FM
 		if path[i].Refuel {
-			left = ship.Fuel.Capacity
+			left = fuelCapa
 		}
 		consumed := mechanics.CalcTravelFuelCost(dist, fm)
-		left -= int32(consumed)
+		left -= consumed
 
-		if left < 0 && !cargoAvailable(ship) {
+		if left < 0 && !canRefuelFromCargo {
 			//fmt.Printf("fuel dipped below 0 from %s to %s\n", path[i].WP.Symbol, path[i+1].WP.Symbol)
 			err := g.RemoveEdge(NewVert(from, path[i].FM), NewVert(to, path[i+1].FM))
 			if err != nil {
@@ -214,8 +216,8 @@ redo:
 
 		if to == target && !canRefuel(target) {
 			nearestFS := findNearestFS(all, target)
-			reserveFuel := int32(mechanics.Distance(nearestFS, target))
-			if left < reserveFuel && reserveFuel < ship.Fuel.Capacity {
+			reserveFuel := int(mechanics.Distance(nearestFS, target))
+			if left < reserveFuel && reserveFuel < fuelCapa {
 				err := g.RemoveEdge(NewVert(from, path[i].FM), NewVert(to, path[i+1].FM))
 				if err != nil {
 					return nil, err
@@ -249,10 +251,6 @@ func findNearestFS(all []*api.Waypoint, target *api.Waypoint) *api.Waypoint {
 		distB := mechanics.Distance(target, b)
 		return cmp.Compare(distA, distB)
 	})
-}
-
-func cargoAvailable(ship *api.Ship) bool {
-	return ship.Cargo.Units < ship.Cargo.Capacity
 }
 
 func canRefuel(wp *api.Waypoint) bool {
