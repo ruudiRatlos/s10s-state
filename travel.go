@@ -97,6 +97,12 @@ func calcNavRoute(ctx context.Context, ship *api.Ship, all []*api.Waypoint, sour
 		api.SHIPNAVFLIGHTMODE_BURN,
 	}
 
+	if fuelCapa == 0 {
+		allFlightModes = []api.ShipNavFlightMode{
+			api.SHIPNAVFLIGHTMODE_CRUISE,
+		}
+	}
+
 	// create all vertices
 	for _, s := range all {
 		for _, fm := range allFlightModes {
@@ -196,7 +202,7 @@ redo:
 		consumed := mechanics.CalcTravelFuelCost(dist, fm)
 		left -= consumed
 
-		if left < 0 && !canRefuelFromCargo {
+		if fuelCapa > 0 && left < 0 && !canRefuelFromCargo {
 			//fmt.Printf("fuel dipped below 0 from %s to %s\n", path[i].WP.Symbol, path[i+1].WP.Symbol)
 			err := g.RemoveEdge(NewVert(from, path[i].FM), NewVert(to, path[i+1].FM))
 			if err != nil {
@@ -205,7 +211,7 @@ redo:
 			goto redo
 		}
 
-		if to == target && !canRefuel(target) {
+		if fuelCapa > 0 && to == target && !canRefuel(target) {
 			nearestFS := findNearestFS(all, target)
 			reserveFuel := int(mechanics.Distance(nearestFS, target))
 			if left < reserveFuel && reserveFuel < fuelCapa {

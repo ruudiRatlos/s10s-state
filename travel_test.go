@@ -73,6 +73,41 @@ func TestCalcNavRouteFullNoCargo(t *testing.T) {
 	}
 }
 
+func TestCalcNavRouteProbe(t *testing.T) {
+	ctx := context.Background()
+	all := loadWPS(t, "test-data/wps-x1-zt18.json")
+	probe := "test-data/ship_probe.json"
+
+	type ttt struct {
+		ship     string
+		from, to string
+		time     int
+	}
+
+	ttts := []ttt{
+		{probe, "X1-ZT18-A11F", "X1-ZT18-E10C", 1840},
+	}
+
+	for _, tc := range ttts {
+		ship := loadShip(t, tc.ship)
+		ship.Fuel.Current = 200
+		tName := fmt.Sprintf("%s:%s -> %s", ship.Registration.Role, tc.from, tc.to)
+		t.Run(tName, func(t *testing.T) {
+			from := findWP(t, all, tc.from)
+			to := findWP(t, all, tc.to)
+			res, err := calcNavRoute(ctx, ship, all, from, to)
+			if err != nil {
+				t.Errorf("got: %v, %v; exp: err==nil", res, err)
+			}
+			got := calcTime(res, ship)
+			if got != tc.time {
+				showRoute(ship, res)
+				t.Errorf("got: %v, exp: %v", got, tc.time)
+			}
+		})
+	}
+}
+
 func TestCalcNavRouteEmptyNoCargo(t *testing.T) {
 	ctx := context.Background()
 	all := loadWPS(t, "test-data/wps-x1-py55.json")

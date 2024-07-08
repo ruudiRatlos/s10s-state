@@ -1,0 +1,97 @@
+{
+  "cargo": {
+    "capacity": 0,
+    "inventory": [],
+    "units": 0
+  },
+  "cooldown": {
+    "remainingSeconds": 0,
+    "shipSymbol": "RUUDI-RATLOS-27",
+    "totalSeconds": 0
+  },
+  "crew": {
+    "capacity": 0,
+    "current": 0,
+    "morale": 100,
+    "required": 0,
+    "rotation": "STRICT",
+    "wages": 0
+  },
+  "engine": {
+    "condition": 0.986617353387296,
+    "description": "A basic low-energy propulsion system that generates thrust for interplanetary travel.",
+    "integrity": 1,
+    "name": "Impulse Drive I",
+    "requirements": {
+      "crew": 0,
+      "power": 1
+    },
+    "speed": 3,
+    "symbol": "ENGINE_IMPULSE_DRIVE_I"
+  },
+  "frame": {
+    "condition": 0.986617353387296,
+    "description": "A small, unmanned spacecraft used for exploration, reconnaissance, and scientific research.",
+    "fuelCapacity": 0,
+    "integrity": 1,
+    "moduleSlots": 0,
+    "mountingPoints": 0,
+    "name": "Probe",
+    "requirements": {
+      "crew": 0,
+      "power": 1
+    },
+    "symbol": "FRAME_PROBE"
+  },
+  "fuel": {
+    "capacity": 0,
+    "consumed": {
+      "amount": 0,
+      "timestamp": "2024-07-07T23:56:00.449Z"
+    },
+    "current": 0
+  },
+  "modules": [],
+  "mounts": [],
+  "nav": {
+    "flightMode": "BURN",
+    "route": {
+      "arrival": "2024-07-08T00:23:56.425Z",
+      "departureTime": "2024-07-07T23:56:00.425Z",
+      "destination": {
+        "symbol": "X1-ZT18-A11F",
+        "systemSymbol": "X1-ZT18",
+        "type": "FUEL_STATION",
+        "x": 226,
+        "y": 38
+      },
+      "origin": {
+        "symbol": "X1-ZT18-AD8X",
+        "systemSymbol": "X1-ZT18",
+        "type": "GAS_GIANT",
+        "x": 50,
+        "y": 119
+      }
+    },
+    "status": "IN_ORBIT",
+    "systemSymbol": "X1-ZT18",
+    "waypointSymbol": "X1-ZT18-A11F"
+  },
+  "reactor": {
+    "condition": 1,
+    "description": "A basic solar power reactor, used to generate electricity from solar energy.",
+    "integrity": 1,
+    "name": "Solar Reactor I",
+    "powerOutput": 3,
+    "requirements": {
+      "crew": 0
+    },
+    "symbol": "REACTOR_SOLAR_I"
+  },
+  "registration": {
+    "factionSymbol": "COSMIC",
+    "name": "RUUDI-RATLOS-27",
+    "role": "SATELLITE"
+  },
+  "symbol": "RUUDI-RATLOS-27"
+}

@@ -1,0 +1,690 @@
+[
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-E19E",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 15,
+    "y": -324
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T01:09:14.676+02:00",
+      "waypointSymbol": "X1-ZT18-BF5E"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "orbits": "X1-ZT18-CC4A",
+    "symbol": "X1-ZT18-BF5E",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "A world with a rugged, rocky landscape, rich in minerals and other resources, providing a variety of opportunities for mining, research, and exploration.",
+        "name": "Rocky",
+        "symbol": "ROCKY"
+      },
+      {
+        "description": "A location characterized by immense atmospheric pressure, demanding robust engineering solutions and innovative approaches for exploration and resource extraction.",
+        "name": "Extreme Pressure",
+        "symbol": "EXTREME_PRESSURE"
+      },
+      {
+        "description": "A waypoint with scorching heat or freezing cold, requiring specialized equipment and technology to survive and thrive in these harsh environments.",
+        "name": "Extreme Temperatures",
+        "symbol": "EXTREME_TEMPERATURES"
+      },
+      {
+        "description": "A hostile environment with an atmosphere that can rapidly degrade materials and equipment, requiring advanced engineering solutions to ensure the safety and longevity of structures and vehicles.",
+        "name": "Corrosive Atmosphere",
+        "symbol": "CORROSIVE_ATMOSPHERE"
+      }
+    ],
+    "type": "MOON",
+    "x": -57,
+    "y": 9
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T01:08:21.679+02:00",
+      "waypointSymbol": "X1-ZT18-CC4A"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [
+      {
+        "symbol": "X1-ZT18-BF5E"
+      }
+    ],
+    "symbol": "X1-ZT18-CC4A",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "A desolate world with little to no vegetation or water, presenting unique challenges for habitation and resource extraction.",
+        "name": "Barren",
+        "symbol": "BARREN"
+      },
+      {
+        "description": "Vast, desolate landscapes that once held oceans, now exposing the remnants of ancient marine life and providing opportunities for the discovery of valuable resources.",
+        "name": "Dry Seabeds",
+        "symbol": "DRY_SEABEDS"
+      },
+      {
+        "description": "A waypoint rich in the remains of ancient life, offering a valuable window into the past and the potential for scientific discovery.",
+        "name": "Fossils",
+        "symbol": "FOSSILS"
+      },
+      {
+        "description": "A location with a sparse atmosphere, making it difficult to support life without specialized life-support systems.",
+        "name": "Thin Atmosphere",
+        "symbol": "THIN_ATMOSPHERE"
+      }
+    ],
+    "type": "PLANET",
+    "x": -57,
+    "y": 9
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-C28C",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": -28,
+    "y": 329
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-X18C",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": -332,
+    "y": 18
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T00:56:41.934+02:00",
+      "waypointSymbol": "X1-ZT18-XZ3X"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-XZ3X",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An ice-covered world with frigid temperatures, providing unique research opportunities and resources such as ice water, ammonia ice, and other frozen compounds.",
+        "name": "Frozen",
+        "symbol": "FROZEN"
+      },
+      {
+        "description": "Vast, desolate landscapes that once held oceans, now exposing the remnants of ancient marine life and providing opportunities for the discovery of valuable resources.",
+        "name": "Dry Seabeds",
+        "symbol": "DRY_SEABEDS"
+      },
+      {
+        "description": "A celestial light show caused by the interaction of charged particles with the waypoint's atmosphere, creating a mesmerizing spectacle and attracting tourists from across the galaxy.",
+        "name": "Vibrant Auroras",
+        "symbol": "VIBRANT_AURORAS"
+      },
+      {
+        "description": "Large reservoirs of methane gas, used for fuel and in various industrial processes such as the production of hydrocarbons.",
+        "name": "Methane Pools",
+        "symbol": "METHANE_POOLS"
+      },
+      {
+        "description": "A location filled with a dense cloud of ash and debris. Sometimes difficult to navigate, and may be hazardous to ships and other vessels. Sometimes able to provide shelter or protection from other hazards.",
+        "name": "Ash Clouds",
+        "symbol": "ASH_CLOUDS"
+      }
+    ],
+    "type": "PLANET",
+    "x": 5,
+    "y": 39
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T06:06:00.477+02:00",
+      "waypointSymbol": "X1-ZT18-A11F"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-A11F",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "A thriving center of commerce where traders from across the galaxy gather to buy, sell, and exchange goods.",
+        "name": "Marketplace",
+        "symbol": "MARKETPLACE"
+      }
+    ],
+    "type": "FUEL_STATION",
+    "x": 226,
+    "y": 38
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-Z25Z",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 369,
+    "y": 112
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-07T23:36:07.23+02:00",
+      "waypointSymbol": "X1-ZT18-E10C"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-E10C",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "A thriving center of commerce where traders from across the galaxy gather to buy, sell, and exchange goods.",
+        "name": "Marketplace",
+        "symbol": "MARKETPLACE"
+      }
+    ],
+    "type": "JUMP_GATE",
+    "x": 443,
+    "y": 74
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-Z15F",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": -147,
+    "y": 318
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T01:55:46.266+02:00",
+      "waypointSymbol": "X1-ZT18-AD8X"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [
+      {
+        "symbol": "X1-ZT18-EB9Z"
+      }
+    ],
+    "symbol": "X1-ZT18-AD8X",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "A waypoint enveloped in a powerful magnetic field, potentially affecting spacecraft systems, and creating unique phenomena such as the concentration of exotic matter and graviton emitters.",
+        "name": "Strong Magnetosphere",
+        "symbol": "STRONG_MAGNETOSPHERE"
+      },
+      {
+        "description": "A waypoint with a poisonous atmosphere, necessitating the use of specialized equipment and technology to protect inhabitants and visitors from harmful substances.",
+        "name": "Toxic Atmosphere",
+        "symbol": "TOXIC_ATMOSPHERE"
+      }
+    ],
+    "type": "GAS_GIANT",
+    "x": 50,
+    "y": 119
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-A14F",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 181,
+    "y": 337
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T00:47:31.335+02:00",
+      "waypointSymbol": "X1-ZT18-AZ2E"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "orbits": "X1-ZT18-ZB1C",
+    "symbol": "X1-ZT18-AZ2E",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "A desolate world with little to no vegetation or water, presenting unique challenges for habitation and resource extraction.",
+        "name": "Barren",
+        "symbol": "BARREN"
+      },
+      {
+        "description": "A location characterized by immense atmospheric pressure, demanding robust engineering solutions and innovative approaches for exploration and resource extraction.",
+        "name": "Extreme Pressure",
+        "symbol": "EXTREME_PRESSURE"
+      }
+    ],
+    "type": "MOON",
+    "x": -7,
+    "y": -13
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T00:33:03.121+02:00",
+      "waypointSymbol": "X1-ZT18-XA6F"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-XA6F",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "A volatile world marked by intense volcanic activity, creating a hazardous environment with the potential for valuable resource extraction, such as rare metals and geothermal energy.",
+        "name": "Volcanic",
+        "symbol": "VOLCANIC"
+      },
+      {
+        "description": "A collection of dispersed communities, each independent yet connected through trade and communication networks.",
+        "name": "Scattered Settlements",
+        "symbol": "SCATTERED_SETTLEMENTS"
+      },
+      {
+        "description": "Vast, desolate landscapes that once held oceans, now exposing the remnants of ancient marine life and providing opportunities for the discovery of valuable resources.",
+        "name": "Dry Seabeds",
+        "symbol": "DRY_SEABEDS"
+      },
+      {
+        "description": "Expansive fields of ice, providing a vital source of water and other resources such as ammonia ice, liquid hydrogen, and liquid nitrogen for local populations and industries.",
+        "name": "Ice Crystals",
+        "symbol": "ICE_CRYSTALS"
+      },
+      {
+        "description": "A waypoint with a powerful gravitational force, requiring specialized technology and infrastructure to support habitation and resource extraction.",
+        "name": "Strong Gravity",
+        "symbol": "STRONG_GRAVITY"
+      },
+      {
+        "description": "A thriving center of commerce where traders from across the galaxy gather to buy, sell, and exchange goods.",
+        "name": "Marketplace",
+        "symbol": "MARKETPLACE"
+      }
+    ],
+    "type": "PLANET",
+    "x": 68,
+    "y": -37
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-E21A",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 54,
+    "y": -383
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-D27X",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 307,
+    "y": 166
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-D26C",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 357,
+    "y": 2
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T01:54:48.92+02:00",
+      "waypointSymbol": "X1-ZT18-EB9Z"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "orbits": "X1-ZT18-AD8X",
+    "symbol": "X1-ZT18-EB9Z",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "A volatile world marked by intense volcanic activity, creating a hazardous environment with the potential for valuable resource extraction, such as rare metals and geothermal energy.",
+        "name": "Volcanic",
+        "symbol": "VOLCANIC"
+      },
+      {
+        "description": "A waypoint enveloped in a powerful magnetic field, potentially affecting spacecraft systems, and creating unique phenomena such as the concentration of exotic matter and graviton emitters.",
+        "name": "Strong Magnetosphere",
+        "symbol": "STRONG_MAGNETOSPHERE"
+      },
+      {
+        "description": "A waypoint that has been artificially transformed to support life, showcasing the engineering prowess of its inhabitants and providing a hospitable environment for colonization.",
+        "name": "Terraformed",
+        "symbol": "TERRAFORMED"
+      }
+    ],
+    "type": "MOON",
+    "x": 50,
+    "y": 119
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-Z12C",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 32,
+    "y": 323
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-D16B",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": -141,
+    "y": 330
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T00:46:11.643+02:00",
+      "waypointSymbol": "X1-ZT18-ZB1C"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [
+      {
+        "symbol": "X1-ZT18-AZ2E"
+      }
+    ],
+    "symbol": "X1-ZT18-ZB1C",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "A desolate world with little to no vegetation or water, presenting unique challenges for habitation and resource extraction.",
+        "name": "Barren",
+        "symbol": "BARREN"
+      },
+      {
+        "description": "A waypoint that never experiences darkness, providing abundant solar energy and unique living conditions for its inhabitants.",
+        "name": "Perpetual Daylight",
+        "symbol": "PERPETUAL_DAYLIGHT"
+      },
+      {
+        "description": "Vast, desolate landscapes that once held oceans, now exposing the remnants of ancient marine life and providing opportunities for the discovery of valuable resources.",
+        "name": "Dry Seabeds",
+        "symbol": "DRY_SEABEDS"
+      },
+      {
+        "description": "A waypoint rich in the remains of ancient life, offering a valuable window into the past and the potential for scientific discovery.",
+        "name": "Fossils",
+        "symbol": "FOSSILS"
+      },
+      {
+        "description": "Large reservoirs of methane gas, used for fuel and in various industrial processes such as the production of hydrocarbons.",
+        "name": "Methane Pools",
+        "symbol": "METHANE_POOLS"
+      }
+    ],
+    "type": "PLANET",
+    "x": -7,
+    "y": -13
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-A13E",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": -56,
+    "y": 311
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-E17X",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": -286,
+    "y": 210
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-F20Z",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 141,
+    "y": -291
+  },
+  {
+    "chart": {
+      "submittedBy": "RUUDI-RATLOS-27",
+      "submittedOn": "2024-07-08T01:20:55.38+02:00",
+      "waypointSymbol": "X1-ZT18-BC7F"
+    },
+    "faction": {
+      "symbol": "UNITED"
+    },
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-BC7F",
+    "systemSymbol": "X1-ZT18",
+    "traits": [],
+    "type": "GAS_GIANT",
+    "x": -93,
+    "y": -53
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-Z24F",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 287,
+    "y": -183
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-A23B",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 339,
+    "y": -32
+  },
+  {
+    "isUnderConstruction": false,
+    "modifiers": [],
+    "orbitals": [],
+    "symbol": "X1-ZT18-A22X",
+    "systemSymbol": "X1-ZT18",
+    "traits": [
+      {
+        "description": "An unexplored region of space, full of potential discoveries and hidden dangers.",
+        "name": "Uncharted",
+        "symbol": "UNCHARTED"
+      }
+    ],
+    "type": "ASTEROID",
+    "x": 192,
+    "y": -284
+  }
+]
