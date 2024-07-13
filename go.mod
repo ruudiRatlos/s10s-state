@@ -9,7 +9,7 @@ require (
 	github.com/gookit/event v1.1.2
 	github.com/peterbourgon/diskv/v3 v3.0.1
 	github.com/rodaine/table v1.2.0
-	github.com/ruudiRatlos/s10s v1.0.0-alpha.8
+	github.com/ruudiRatlos/s10s v1.0.0-alpha.10
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	golang.org/x/sync v0.7.0
 )
