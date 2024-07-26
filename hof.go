@@ -18,7 +18,7 @@ func (s *State) FindEngineeredAsteroid(ctx context.Context, sys s10s.SystemSymbo
 		}
 		return wp.Symbol, nil
 	}
-	return "", s10s.ErrWaypointNoAccess
+	return "", nil
 }
 
 func (s *State) FindGasGiant(ctx context.Context, sys s10s.SystemSymbol) (string, error) {
@@ -32,5 +32,5 @@ func (s *State) FindGasGiant(ctx context.Context, sys s10s.SystemSymbol) (string
 		}
 		return wp.Symbol, nil
 	}
-	return "", s10s.ErrWaypointNoAccess
+	return "", nil
 }
